@@ -331,7 +331,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B"><span class="toc-text">快速上手</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claude-code%E4%B8%8E%E4%BC%A0%E7%BB%9FIDE%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">claude code与传统IDE的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claude-code%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">claude code的优势</span></a></li></ol></li></ol>
       </div>
     </article>
   
@@ -493,7 +493,7 @@
     
     
       <span class="dot"></span>
-      <span>0 字</span>
+      <span>622 字</span>
     
   </div>
   
@@ -520,7 +520,26 @@
   <div 
     id="section" 
     class="post-content">
-    
+    <h2 id="快速上手"><a href="#快速上手" class="headerlink" title="快速上手"></a>快速上手</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre class="highlight"><code class="hljs bash">npm install -g @anthropic-ai/claude-code<br></code></pre>
+
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><pre class="highlight"><code class="hljs bash"><span class="hljs-comment"># 在项目根目录启动</span><br><span class="hljs-built_in">cd</span> your-project<br>claude<br></code></pre>
+
+<p>就这么简单。Claude Code 会自动识别你的项目结构，读取 <code>CLAUDE.md</code> 配置文件（如果有的话），然后等待你的指令。</p>
+<h3 id="claude-code与传统IDE的区别"><a href="#claude-code与传统IDE的区别" class="headerlink" title="claude code与传统IDE的区别"></a>claude code与传统IDE的区别</h3><ol>
+<li><p>交互形态的不同<br>传统的 IDE 主要是由图形界面 (GUI) 主导的，开发者在编写代码时高度依赖鼠标的点击、菜单的导航以及手动敲击键盘。而 Claude Code 则是以命令行终端 (CLI) 为主导，你主要通过自然语言与它进行对话来输入指令，交流方式更加直接。</p>
+</li>
+<li><p>上下文理解的深度<br>传统 IDE 的理解能力通常是局部的、基于规则的，它能看懂当前文件的语法和变量引用关系，方便你做局部的代码重构或跳转追踪。但 Claude Code 具备全局和基于语义的理解能力，它可以通读你整个代码库的内容，从而理解不同业务模块之间复杂的逻辑关联。</p>
+</li>
+<li><p>执行能力<br>传统 IDE 提供编译和调试按钮，但需要你手动配置和触发。但 Claude Code可以自主搜索文件、读写代码、甚至帮你运行终端命令（如编译、跑测试）。</p>
+</li>
+</ol>
+<h3 id="claude-code的优势"><a href="#claude-code的优势" class="headerlink" title="claude code的优势"></a>claude code的优势</h3><ol>
+<li><p>具备长时间自主工作的能力 (Long-running Agentic Loop)<br>  传统的 AI 辅助往往是“一问一答”的单次交互，但 Claude Code 能够进行长时间、多步骤的自主工作循环。当你抛给它一个宏大且繁琐的任务——比如“帮我排查并修复这个 C++ 项目里所有遗留的编译警告”——它不会马上卡壳，而是会自己拆解任务。它会经历“阅读源码 -&gt; 尝试修改 -&gt; 运行编译工具 -&gt; 遇到报错 -&gt; 分析错误日志 -&gt; 再次修改”的死循环。你可以把一个费时的重构任务丢给它，让它在终端里长时间默默“搬砖”，直到最终达成目标。</p>
+</li>
+<li><p>装备了实用的“技能库” (Skills)<br>  Claude Code 内部集成了一套动作指令（Skills），让它可以像人类程序员一样工作。这些技能包括：读取和编辑指定文件、浏览目录结构、全局搜索代码关键词（grep）、执行终端 Shell 命令，能帮你打包提交 Git，美化前端UI界面。</p>
+</li>
+</ol>
+
   </div>
   <div>
     
@@ -588,7 +607,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B"><span class="toc-text">快速上手</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claude-code%E4%B8%8E%E4%BC%A0%E7%BB%9FIDE%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">claude code与传统IDE的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claude-code%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">claude code的优势</span></a></li></ol></li></ol>
 </div>
 
             </main>
@@ -603,7 +622,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B"><span class="toc-text">快速上手</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claude-code%E4%B8%8E%E4%BC%A0%E7%BB%9FIDE%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">claude code与传统IDE的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claude-code%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">claude code的优势</span></a></li></ol></li></ol>
     </article>
   
   
