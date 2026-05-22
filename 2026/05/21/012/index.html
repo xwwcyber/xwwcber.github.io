@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天空是蔚蓝色，窗外有千纸鹤">
+  <link 
+    rel="icon" 
+    href="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0">
+  <title>AI股票分析</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="AI股票分析">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2026/05/21/012/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0">
+    
+    
+      <meta 
+        property="og:img" 
+        content="使用Al工具(ClaudeCode)构建的一个全栈应用，调用LLM分析股票">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-05-21">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-05-21">
+      <meta 
+        property="og:article:author" 
+        content="xww">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="技术文章">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" as="script">
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">xww的个人博客</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">xww</p>
+<p class="author-description">天空是蔚蓝色</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>12</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>11</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/xwwcyber">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E7%94%A8-Claude-Code-%E5%8D%8A%E5%A4%A9%E5%81%9A%E4%BA%86%E4%B8%80%E4%B8%AA%E5%85%A8%E6%A0%88-AI-%E8%82%A1%E7%A5%A8%E5%88%86%E6%9E%90%E9%9D%A2%E6%9D%BF"><span class="toc-text">我用 Claude Code 半天做了一个全栈 AI 股票分析面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%86%99%E8%BF%99%E7%AF%87"><span class="toc-text">为什么写这篇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">整体工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-1%EF%BC%9A%E9%9C%80%E6%B1%82%E6%8B%86%E8%A7%A3-x2F-%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-text">阶段 1：需求拆解 &#x2F; 技术选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-2%EF%BC%9A%E8%84%9A%E6%89%8B%E6%9E%B6%E4%B8%8E%E6%A0%B7%E6%9D%BF%E4%BB%A3%E7%A0%81"><span class="toc-text">阶段 2：脚手架与样板代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-3%EF%BC%9APrompt-%E8%AE%BE%E8%AE%A1%E4%B8%8E-LLM-%E9%9B%86%E6%88%90%EF%BC%88%E9%87%8D%E5%A4%B4%E6%88%8F%EF%BC%89"><span class="toc-text">阶段 3：Prompt 设计与 LLM 集成（重头戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9ALLM-%E9%BB%98%E8%AE%A4%E9%9D%9E%E5%B8%B8%E5%96%9C%E6%AC%A2%E3%80%8C%E4%B9%B1%E8%AF%B4%E8%AF%9D%E3%80%8D"><span class="toc-text">问题：LLM 默认非常喜欢「乱说话」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%EF%BC%9A%E4%B8%89%E5%B1%82%E9%98%B2%E5%BE%A1"><span class="toc-text">解法：三层防御</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%EF%BC%9ASystem-Prompt-%E5%86%99%E6%AD%BB%E6%A0%BC%E5%BC%8F%E5%A5%91%E7%BA%A6"><span class="toc-text">第一层：System Prompt 写死格式契约</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%EF%BC%9AAPI-%E8%B0%83%E7%94%A8%E5%B1%82%E5%BC%BA%E5%88%B6-JSON-%E6%A8%A1%E5%BC%8F"><span class="toc-text">第二层：API 调用层强制 JSON 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%EF%BC%9A%E5%90%8E%E7%AB%AF%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A0%A1%E9%AA%8C"><span class="toc-text">第三层：后端运行时校验</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-4%EF%BC%9ADebug%EF%BC%88%E6%9C%80%E4%BD%93%E7%8E%B0-AI-%E4%BB%B7%E5%80%BC%E7%9A%84%E7%8E%AF%E8%8A%82%EF%BC%89"><span class="toc-text">阶段 4：Debug（最体现 AI 价值的环节）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1"><span class="toc-text">现象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%8E%92%E6%9F%A5-vs-AI-%E5%8D%8F%E4%BD%9C%E6%8E%92%E6%9F%A5"><span class="toc-text">传统排查 vs AI 协作排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E5%9B%A0"><span class="toc-text">根因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D"><span class="toc-text">修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%AA-Debug-%E6%95%85%E4%BA%8B%E7%9A%84%E5%87%A0%E6%9D%A1%E5%BF%83%E5%BE%97"><span class="toc-text">这个 Debug 故事的几条心得</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-5%EF%BC%9A%E9%83%A8%E7%BD%B2%E4%B8%8E%E4%B8%8A%E7%BA%BF"><span class="toc-text">阶段 5：部署与上线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98%EF%BC%9A5-%E6%9D%A1%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84-AI-%E5%8D%8F%E4%BD%9C%E5%BF%83%E5%BE%97"><span class="toc-text">复盘：5 条可复用的 AI 协作心得</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AE%A9-AI-%E5%BD%93%E3%80%8C%E5%80%99%E9%80%89%E6%96%B9%E6%A1%88%E5%8E%8B%E7%BC%A9%E5%99%A8%E3%80%8D%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E3%80%8C%E5%86%B3%E7%AD%96%E8%80%85%E3%80%8D"><span class="toc-text">1. 让 AI 当「候选方案压缩器」，而不是「决策者」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B7%E6%9D%BF%E4%BB%A3%E7%A0%81%E5%85%A8%E6%9D%83%E5%A7%94%E6%89%98%EF%BC%8C%E4%BD%86-Code-Review-%E4%B8%8D%E8%83%BD%E7%9C%81"><span class="toc-text">2. 样板代码全权委托，但 Code Review 不能省</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Prompt-%E5%B7%A5%E7%A8%8B%E6%98%AF%E5%8F%8D%E5%A4%8D%E5%AF%B9%E6%8A%97%E6%B5%8B%E8%AF%95%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%B8%80%E6%AC%A1%E5%86%99%E5%A5%BD"><span class="toc-text">3. Prompt 工程是反复对抗测试，不是一次写好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%85%8D%E7%BD%AE%E7%B1%BB%E9%94%99%E8%AF%AF%E4%BC%98%E5%85%88%E7%94%A8%E8%AF%8A%E6%96%AD%E8%84%9A%E6%9C%AC"><span class="toc-text">4. 配置类错误优先用诊断脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%8A%8A-AI-%E5%BD%93%E6%88%90%E3%80%8C%E4%B8%8D%E4%BC%9A%E7%B4%AF%E7%9A%84%E6%90%AD%E6%A1%A3%E3%80%8D%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E3%80%8C%E9%AD%94%E6%B3%95%E5%B7%A5%E5%85%B7%E3%80%8D"><span class="toc-text">5. 把 AI 当成「不会累的搭档」，而不是「魔法工具」</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-text">项目链接</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/tips/">
+        <div class="categories-list-item">
+          tips
+          <span class="categories-list-item-badge">5</span>
+        </div>
+      </a>
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">
+        <div class="categories-list-item">
+          技术文章
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI/">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/claude/">
+        <div class="categories-list-item">
+          claude
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/claude/" 
+        title="claude">
+        <div class="tags-list-item">claude</div>
+      </a>
+    
+      <a 
+        href="/tags/MySQL/" 
+        title="MySQL">
+        <div class="tags-list-item">MySQL</div>
+      </a>
+    
+      <a 
+        href="/tags/git/" 
+        title="git">
+        <div class="tags-list-item">git</div>
+      </a>
+    
+      <a 
+        href="/tags/github/" 
+        title="github">
+        <div class="tags-list-item">github</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" 
+        title="技术文章">
+        <div class="tags-list-item">技术文章</div>
+      </a>
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" 
+        title="数据库">
+        <div class="tags-list-item">数据库</div>
+      </a>
+    
+      <a 
+        href="/tags/OpenSource/" 
+        title="OpenSource">
+        <div class="tags-list-item">OpenSource</div>
+      </a>
+    
+      <a 
+        href="/tags/libVLC/" 
+        title="libVLC">
+        <div class="tags-list-item">libVLC</div>
+      </a>
+    
+      <a 
+        href="/tags/Qt/" 
+        title="Qt">
+        <div class="tags-list-item">Qt</div>
+      </a>
+    
+      <a 
+        href="/tags/markdown/" 
+        title="markdown">
+        <div class="tags-list-item">markdown</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      AI股票分析
+    </h1>
+  </header>
+  
+    <div class="post-meta post-show-meta">
+      <a href="https://github.com/xwwcyber/xwwcyber.github.io/edit/main/source/_posts/012.md" target="_blank">编辑原文</a>
+    </div>
+  
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-05-21T00:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-05-21</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/claude/" 
+          class="post-meta-link">
+          claude
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3.5k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" 
+            class="post-meta-link">
+            技术文章
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="我用-Claude-Code-半天做了一个全栈-AI-股票分析面板"><a href="#我用-Claude-Code-半天做了一个全栈-AI-股票分析面板" class="headerlink" title="我用 Claude Code 半天做了一个全栈 AI 股票分析面板"></a>我用 Claude Code 半天做了一个全栈 AI 股票分析面板</h2><p> <strong>TL;DR</strong>：从零开始，<strong>Next.js 16 + DeepSeek + Supabase + Render</strong>，行情拉取 → LLM 结构化分析 → 数据库落库 → 线上部署，全流程半天完工。</p>
+<p> 线上 Demo：<a target="_blank" rel="noopener" href="https://stock-ai-r7qr.onrender.com/">https://stock-ai-r7qr.onrender.com</a></p>
+<p> 源码：<a target="_blank" rel="noopener" href="https://github.com/xwwcyber/stock-ai">https://github.com/xwwcyber/stock-ai</a></p>
+<blockquote>
+<p>这篇不是讲项目本身，而是复盘<strong>我是怎么和 Claude Code 配合的</strong>——哪些事让 AI 主导更快、哪些事必须自己亲自定夺，以及一套我后续会反复用的「AI 协作工作流」。</p>
+</blockquote>
+<hr>
+<h2 id="为什么写这篇"><a href="#为什么写这篇" class="headerlink" title="为什么写这篇"></a>为什么写这篇</h2><p>很多人聊 AI 编码工具都停在「我让它生成了一段代码，省了 10 分钟」。但真正能体现 AI 价值的，是在一个<strong>真实的、多技术栈的、有部署链路的</strong>项目里，把 AI 当成一个不会累、不会烦、能记住上下文的搭档来用。</p>
+<p>这个 stock-ai 项目刚好覆盖了一个全栈 AI 应用的所有关键环节：</p>
+<ul>
+<li>第三方数据接口接入（东方财富）</li>
+<li>LLM 调用与结构化输出（DeepSeek）</li>
+<li>数据库 schema 设计与 RLS（Supabase Postgres）</li>
+<li>前端交互（Next.js App Router + Tailwind）</li>
+<li>部署与环境变量管理（Render）</li>
+</ul>
+<p>每一环我都和 Claude Code 配合过，有些环节几乎完全交给它，有些环节我必须出手。复盘下来，我总结出 5 个阶段的协作模式，下面挨个讲。</p>
+<hr>
+<h2 id="整体工作流"><a href="#整体工作流" class="headerlink" title="整体工作流"></a>整体工作流</h2><pre class="highlight"><code class="hljs gauss">┌─────────────────────────────────────────────────────────┐<br>│  阶段 <span class="hljs-number">1</span>：需求拆解 / 技术选型（AI 当架构顾问，我做决策）   │<br>└──────────────────────┬──────────────────────────────────┘<br>                       ▼<br>┌─────────────────────────────────────────────────────────┐<br>│  阶段 <span class="hljs-number">2</span>：脚手架与样板代码（AI 主导生成，我做 <span class="hljs-built_in">code</span> review）│<br>└──────────────────────┬──────────────────────────────────┘<br>                       ▼<br>┌─────────────────────────────────────────────────────────┐<br>│  阶段 <span class="hljs-number">3</span>：Prompt 设计与 LLM 集成（AI 提建议，我反复调）   │<br>└──────────────────────┬──────────────────────────────────┘<br>                       ▼<br>┌─────────────────────────────────────────────────────────┐<br>│  阶段 <span class="hljs-number">4</span>：<span class="hljs-keyword">Debug</span>（最体现 AI 价值的环节）                  │<br>└──────────────────────┬──────────────────────────────────┘<br>                       ▼<br>┌─────────────────────────────────────────────────────────┐<br>│  阶段 <span class="hljs-number">5</span>：部署与上线（AI 当 Checklist，我自己点按钮）     │<br>└─────────────────────────────────────────────────────────┘<br></code></pre>
+
+<hr>
+<h2 id="阶段-1：需求拆解-x2F-技术选型"><a href="#阶段-1：需求拆解-x2F-技术选型" class="headerlink" title="阶段 1：需求拆解 &#x2F; 技术选型"></a>阶段 1：需求拆解 &#x2F; 技术选型</h2><p><strong>我做的事：</strong>给出业务目标——「输入股票代码，调用免费 API 拿行情，LLM 给一段结构化分析，存到数据库，部署上线」。</p>
+<p><strong>让 AI 做的事：</strong></p>
+<ul>
+<li>列举可选的免费行情数据源（东方财富 &#x2F; 新浪财经 &#x2F; Yahoo Finance），各自优劣</li>
+<li>列举可选的 LLM 服务商（OpenAI &#x2F; DeepSeek &#x2F; 通义 &#x2F; Moonshot），按价格、国内可达性、JSON mode 支持度排序</li>
+<li>给出 Supabase vs Neon vs Vercel Postgres 的对比</li>
+<li>用一段话总结<strong>最小可行架构</strong></li>
+</ul>
+<blockquote>
+<p><strong>协作要点：技术选型不是让 AI 替你选，而是让 AI 把候选方案压缩成一张对比表，你拿着表做决策。</strong></p>
+</blockquote>
+<p>最后我选的组合：</p>
+<ul>
+<li>行情：东方财富（零 API Key，A股&#x2F;港股&#x2F;美股全覆盖）</li>
+<li>LLM：DeepSeek（兼容 OpenAI SDK，便宜，国内稳定）</li>
+<li>数据库：Supabase（免费 500MB + REST API + RLS）</li>
+<li>部署：Render Free Tier（GitHub 直连）</li>
+</ul>
+<p>这一步耗时约 20 分钟，全程对话式。如果让我自己 Google 比较，至少要 1-2 小时。</p>
+<hr>
+<h2 id="阶段-2：脚手架与样板代码"><a href="#阶段-2：脚手架与样板代码" class="headerlink" title="阶段 2：脚手架与样板代码"></a>阶段 2：脚手架与样板代码</h2><p>这一步基本完全交给 AI。我的提示词只有一句话级别：</p>
+<blockquote>
+<p>“用 Next.js 16 App Router + TypeScript + Tailwind 4 初始化项目，给我一个最简版本，有 <code>app/page.tsx</code>、<code>app/api/quote/route.ts</code>、<code>lib/eastmoney.ts</code> 三个文件即可，先用 mock 数据跑通。”</p>
+</blockquote>
+<p>Claude Code 在自己的环境里把项目跑起来了，生成的代码包含：</p>
+<ul>
+<li><code>lib/eastmoney.ts</code> 里的多市场代码识别（A股 6 位、港股 5 位、美股字母）</li>
+<li>API Route 的标准请求&#x2F;响应处理</li>
+<li>前端的 loading &#x2F; error 状态</li>
+</ul>
+<p>我做的事只有：</p>
+<ol>
+<li><strong>Code review</strong>：检查 TypeScript 类型、错误处理是否完整</li>
+<li><strong>拆掉过度设计</strong>：AI 一开始加了一个 <code>useReducer</code> 管状态，我让它换成普通 <code>useState</code>——三个状态不需要 reducer</li>
+<li><strong>指出 Next.js 16 的破坏性变化</strong>：项目里有个 <code>AGENTS.md</code> 提示「This is NOT the Next.js you know」，我让 AI 先查 <code>node_modules/next/dist/docs/</code>，避免它套用旧版 API</li>
+</ol>
+<blockquote>
+<p><strong>协作要点：让 AI 写样板代码的同时，必须 review。AI 的默认习惯是「全部都写」，你要主动砍掉不需要的东西。三行重复代码优于过早抽象——这条规则你不说，AI 不会知道。</strong></p>
+</blockquote>
+<hr>
+<h2 id="阶段-3：Prompt-设计与-LLM-集成（重头戏）"><a href="#阶段-3：Prompt-设计与-LLM-集成（重头戏）" class="headerlink" title="阶段 3：Prompt 设计与 LLM 集成（重头戏）"></a>阶段 3：Prompt 设计与 LLM 集成（重头戏）</h2><p>这是整个项目<strong>唯一让我反复打磨</strong>的环节，也是最体现 LLM 应用工程能力的部分。</p>
+<h3 id="问题：LLM-默认非常喜欢「乱说话」"><a href="#问题：LLM-默认非常喜欢「乱说话」" class="headerlink" title="问题：LLM 默认非常喜欢「乱说话」"></a>问题：LLM 默认非常喜欢「乱说话」</h3><p>要 LLM 输出 JSON，初版 Prompt 写「请输出 JSON 格式的分析结果」，模型会：</p>
+<ul>
+<li>在 JSON 前后写一堆解释（”以下是分析结果：…”）</li>
+<li>用 <code>```json ... ```</code> markdown 代码块包裹</li>
+<li>字段名拼写不一致（<code>risk_level</code> vs <code>riskLevel</code>）</li>
+<li>枚举值擅自翻译（<code>高/中/低</code> 代替 <code>High/Medium/Low</code>）</li>
+</ul>
+<p>任何一种都会让前端 <code>JSON.parse</code> 炸掉。这不是 LLM 的 bug，是它的<strong>默认行为</strong>——它被训练得「友好」「会解释」，而不是「机械精确」。</p>
+<h3 id="解法：三层防御"><a href="#解法：三层防御" class="headerlink" title="解法：三层防御"></a>解法：三层防御</h3><p>我和 Claude Code 来回迭代了 5 轮，最终定稿的是<strong>三层防御</strong>结构：</p>
+<h4 id="第一层：System-Prompt-写死格式契约"><a href="#第一层：System-Prompt-写死格式契约" class="headerlink" title="第一层：System Prompt 写死格式契约"></a>第一层：System Prompt 写死格式契约</h4><pre class="highlight"><code class="hljs ts"><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">SYSTEM_PROMPT</span> = <span class="hljs-string">`你是一名资深股票分析师。基于用户给出的实时行情快照，输出客观的短评。</span><br><span class="hljs-string"></span><br><span class="hljs-string">返回必须是严格的 JSON 对象，字段如下：</span><br><span class="hljs-string">- summary: string（中文，120-200 字，总结当前价格表现、成交活跃度、相对昨收的位置，避免任何投资建议）</span><br><span class="hljs-string">- sentiment: &quot;Bullish&quot; | &quot;Neutral&quot; | &quot;Bearish&quot;（基于技术面信号判断当下情绪）</span><br><span class="hljs-string">- risk_level: &quot;Low&quot; | &quot;Medium&quot; | &quot;High&quot;（结合波幅、换手率、估值给出风险）</span><br><span class="hljs-string">- key_factors: string[]（3-5 条最关键的支撑/风险点，每条不超过 30 字）</span><br><span class="hljs-string"></span><br><span class="hljs-string">只返回 JSON，不要任何解释性前后缀，不要使用 markdown 代码块包裹。`</span>;<br></code></pre>
+
+<p><strong>关键技巧</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>技巧</th>
+<th>为什么有效</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>逐字段列约束（类型 + 取值 + 字数限制）</td>
+<td>远比一句「输出 JSON」具体，模型可遵循的颗粒度细</td>
+</tr>
+<tr>
+<td>枚举值用 TypeScript 字面量写出</td>
+<td>模型会照抄 <code>&quot;Bullish&quot; | &quot;Neutral&quot; | &quot;Bearish&quot;</code>，不会自创 <code>Up/Down</code></td>
+</tr>
+<tr>
+<td>显式禁止 markdown 包裹</td>
+<td>阻止 <code>```json ... ```</code> 这种破坏 JSON.parse 的格式</td>
+</tr>
+<tr>
+<td>加「避免任何投资建议」</td>
+<td>合规友好，同时降低模型发散</td>
+</tr>
+</tbody></table>
+<h4 id="第二层：API-调用层强制-JSON-模式"><a href="#第二层：API-调用层强制-JSON-模式" class="headerlink" title="第二层：API 调用层强制 JSON 模式"></a>第二层：API 调用层强制 JSON 模式</h4><pre class="highlight"><code class="hljs ts"><span class="hljs-keyword">const</span> completion = <span class="hljs-keyword">await</span> client.<span class="hljs-property">chat</span>.<span class="hljs-property">completions</span>.<span class="hljs-title function_">create</span>(&#123;<br>  <span class="hljs-attr">model</span>: <span class="hljs-string">&#x27;deepseek-chat&#x27;</span>,<br>  <span class="hljs-attr">messages</span>: [<br>    &#123; <span class="hljs-attr">role</span>: <span class="hljs-string">&#x27;system&#x27;</span>, <span class="hljs-attr">content</span>: <span class="hljs-variable constant_">SYSTEM_PROMPT</span> &#125;,<br>    &#123; <span class="hljs-attr">role</span>: <span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-attr">content</span>: <span class="hljs-title function_">buildUserPrompt</span>(quote) &#125;,<br>  ],<br>  <span class="hljs-attr">response_format</span>: &#123; <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;json_object&#x27;</span> &#125;,   <span class="hljs-comment">// ← 解码层强制</span><br>  <span class="hljs-attr">temperature</span>: <span class="hljs-number">0.4</span>,                            <span class="hljs-comment">// ← 降低发散度</span><br>  <span class="hljs-attr">max_tokens</span>: <span class="hljs-number">800</span>,<br>&#125;);<br></code></pre>
+
+<p><code>response_format: &#123; type: &#39;json_object&#39; &#125;</code> 是 OpenAI 兼容协议的 <strong>解码层约束</strong>，从根本上杜绝非 JSON 输出——哪怕模型「想」加前缀也输不出来。</p>
+<p><code>temperature: 0.4</code> 不是越低越好。股票分析需要轻微发散，但又不能天马行空——0.4 是我试了 <code>0.0 / 0.2 / 0.4 / 0.7</code> 之后的平衡点。</p>
+<h4 id="第三层：后端运行时校验"><a href="#第三层：后端运行时校验" class="headerlink" title="第三层：后端运行时校验"></a>第三层：后端运行时校验</h4><pre class="highlight"><code class="hljs ts"><span class="hljs-keyword">function</span> <span class="hljs-title function_">validate</span>(<span class="hljs-params">data: <span class="hljs-built_in">unknown</span></span>): <span class="hljs-title class_">Analysis</span> &#123;<br>  <span class="hljs-keyword">if</span> (!data || <span class="hljs-keyword">typeof</span> data !== <span class="hljs-string">&#x27;object&#x27;</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;LLM 输出格式错误&#x27;</span>);<br>  <span class="hljs-keyword">const</span> obj = data <span class="hljs-keyword">as</span> <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">unknown</span>&gt;;<br><br>  <span class="hljs-keyword">const</span> summary = <span class="hljs-keyword">typeof</span> obj.<span class="hljs-property">summary</span> === <span class="hljs-string">&#x27;string&#x27;</span> ? obj.<span class="hljs-property">summary</span> : <span class="hljs-string">&#x27;&#x27;</span>;<br>  <span class="hljs-keyword">const</span> sentiment = obj.<span class="hljs-property">sentiment</span>;<br>  <span class="hljs-keyword">const</span> risk_level = obj.<span class="hljs-property">risk_level</span> ?? obj.<span class="hljs-property">riskLevel</span>;          <span class="hljs-comment">// 兼容 camelCase</span><br>  <span class="hljs-keyword">const</span> key_factors = <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(obj.<span class="hljs-property">key_factors</span>)<br>    ? obj.<span class="hljs-property">key_factors</span>.<span class="hljs-title function_">map</span>(<span class="hljs-title class_">String</span>).<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)<br>    : <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(obj.<span class="hljs-property">keyFactors</span>)<br>      ? (obj.<span class="hljs-property">keyFactors</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">unknown</span>[]).<span class="hljs-title function_">map</span>(<span class="hljs-title class_">String</span>).<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)<br>      : [];<br><br>  <span class="hljs-keyword">if</span> (!summary) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;summary 字段缺失&#x27;</span>);<br>  <span class="hljs-keyword">if</span> (sentiment !== <span class="hljs-string">&#x27;Bullish&#x27;</span> &amp;&amp; sentiment !== <span class="hljs-string">&#x27;Neutral&#x27;</span> &amp;&amp; sentiment !== <span class="hljs-string">&#x27;Bearish&#x27;</span>) &#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`sentiment 取值非法: <span class="hljs-subst">$&#123;<span class="hljs-built_in">String</span>(sentiment)&#125;</span>`</span>);<br>  &#125;<br>  <span class="hljs-keyword">if</span> (risk_level !== <span class="hljs-string">&#x27;Low&#x27;</span> &amp;&amp; risk_level !== <span class="hljs-string">&#x27;Medium&#x27;</span> &amp;&amp; risk_level !== <span class="hljs-string">&#x27;High&#x27;</span>) &#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`risk_level 取值非法: <span class="hljs-subst">$&#123;<span class="hljs-built_in">String</span>(risk_level)&#125;</span>`</span>);<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> &#123; summary, sentiment, risk_level, key_factors &#125;;<br>&#125;<br></code></pre>
+
+<p>即使前两层都失守，这里也拦得住「字段缺失 &#x2F; 枚举乱写 &#x2F; 类型错误」。兼容 <code>riskLevel</code> &#x2F; <code>risk_level</code> 两种命名，但<strong>不接受</strong> <code>Up/Down</code>、<code>高/中/低</code> 这种擅自翻译。</p>
+<blockquote>
+<p><strong>协作要点：Prompt 工程不是「让 AI 帮你写 Prompt」就完事。AI 第一版 Prompt 通常太「礼貌」，缺少强约束。你要做的是反复对抗测试——拿真实数据跑 20 次，看输出有没有任何一次破坏 JSON，破坏了就加一条约束，直到 100 次都不破坏为止。</strong></p>
+</blockquote>
+<hr>
+<h2 id="阶段-4：Debug（最体现-AI-价值的环节）"><a href="#阶段-4：Debug（最体现-AI-价值的环节）" class="headerlink" title="阶段 4：Debug（最体现 AI 价值的环节）"></a>阶段 4：Debug（最体现 AI 价值的环节）</h2><p>这一节我要详写，因为它是我整个项目里<strong>对 AI 协作收益感受最深的一段</strong>。</p>
+<h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p>集成 Supabase 完成第一次本地联调，请求 <code>/api/analyze</code> 返回看起来正常：</p>
+<pre class="highlight"><code class="hljs json"><span class="hljs-punctuation">&#123;</span> <span class="hljs-attr">&quot;quote&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span> ... <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;analysis&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span> ... <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;saved&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;record_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">null</span></span> <span class="hljs-punctuation">&#125;</span><br></code></pre>
+
+<p>但 <code>saved: false</code>。看 dev server 日志：</p>
+<pre class="highlight"><code class="hljs gauss">[<span class="hljs-keyword">save</span>] 落库失败: <span class="hljs-built_in">Error</span>: Supabase 写入失败: Invalid path specified in request URL<br></code></pre>
+
+<p>PostgREST 错误码 <code>PGRST125</code>，错误文案 5 个英文单词，没有堆栈细节。</p>
+<h3 id="传统排查-vs-AI-协作排查"><a href="#传统排查-vs-AI-协作排查" class="headerlink" title="传统排查 vs AI 协作排查"></a>传统排查 vs AI 协作排查</h3><p><strong>传统做法</strong>：Google「PGRST125 Supabase」→ 翻几篇英文 Issue → 猜几个原因 → 改代码试。预计 30-60 分钟。</p>
+<p><strong>AI 协作做法</strong>：</p>
+<p>把这条错误直接丢给 Claude，并附上 <code>lib/supabase.ts</code> 的源码。Claude 立刻给出 4 个候选原因：</p>
+<ol>
+<li>⚠️ <code>SUPABASE_URL</code> 末尾带了 <code>/</code> 或多余路径</li>
+<li>表不在 <code>public</code> schema</li>
+<li>Data API 没启用（项目创建时的安全选项）</li>
+<li>客户端版本与 Publishable Key 不兼容</li>
+</ol>
+<p><strong>关键的一步</strong>：Claude 主动说「我不能直接读你的 <code>.env.local</code>（凭据有泄露风险），但我可以帮你写一个<strong>脱敏诊断脚本</strong>」。</p>
+<pre class="highlight"><code class="hljs js"><span class="hljs-comment">// 关键脱敏打印：只显示前后几位</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;URL :&#x27;</span>, url);<br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;KEY :&#x27;</span>, key.<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, <span class="hljs-number">12</span>) + <span class="hljs-string">&#x27;...&#x27;</span> + key.<span class="hljs-title function_">slice</span>(-<span class="hljs-number">6</span>),<br>            <span class="hljs-string">`(共 <span class="hljs-subst">$&#123;key.length&#125;</span> 字符)`</span>);<br><br><span class="hljs-comment">// URL 格式校验</span><br><span class="hljs-keyword">if</span> (url.<span class="hljs-title function_">endsWith</span>(<span class="hljs-string">&#x27;/&#x27;</span>)) <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">warn</span>(<span class="hljs-string">&#x27;⚠️  URL 末尾不应有 /&#x27;</span>);<br><span class="hljs-keyword">if</span> (!<span class="hljs-regexp">/^https:\/\/[a-z0-9]+\.supabase\.co$/</span>.<span class="hljs-title function_">test</span>(url)) &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">warn</span>(<span class="hljs-string">&#x27;⚠️  URL 格式可能异常&#x27;</span>);<br>&#125;<br><br><span class="hljs-comment">// 逐层诊断：根路径 → 读表 → 写表</span><br><span class="hljs-keyword">const</span> root  = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;url&#125;</span>/rest/v1/`</span>, &#123; <span class="hljs-attr">headers</span>: &#123; <span class="hljs-attr">apikey</span>: key, ... &#125; &#125;);<br><span class="hljs-keyword">const</span> read  = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;url&#125;</span>/rest/v1/analyses?select=*&amp;limit=1`</span>, ...);<br><span class="hljs-keyword">const</span> write = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;url&#125;</span>/rest/v1/analyses`</span>, &#123; <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>, ... &#125;);<br></code></pre>
+
+<p>跑一次，问题立刻浮现：</p>
+<pre class="highlight"><code class="hljs awk">URL : https:<span class="hljs-regexp">//</span>rvjgpyxorigsjxzkrbhu.supabase.co<span class="hljs-regexp">/rest/</span>v1/    ← 问题暴露！<br>⚠️  URL 末尾不应有 /<br>⚠️  URL 格式可能异常，标准形如 https:<span class="hljs-regexp">//</span>abc123.supabase.co<br></code></pre>
+
+<h3 id="根因"><a href="#根因" class="headerlink" title="根因"></a>根因</h3><p><code>SUPABASE_URL</code> 末尾**多了 <code>/rest/v1/</code>**——我从 Supabase Dashboard 的 <strong>API Docs</strong> 页面复制了完整 endpoint，而不是从 <strong>Project URL</strong> 字段拿。</p>
+<p><code>@supabase/supabase-js</code> 内部会自己拼 <code>/rest/v1/&lt;table&gt;</code> 路径，所以最终请求 URL 变成：</p>
+<pre class="highlight"><code class="hljs awk">https:<span class="hljs-regexp">//</span>xxx.supabase.co<span class="hljs-regexp">/rest/</span>v1<span class="hljs-regexp">/  +  /</span>rest<span class="hljs-regexp">/v1/</span>analyses<br>= https:<span class="hljs-regexp">//</span>xxx.supabase.co<span class="hljs-regexp">/rest/</span>v1<span class="hljs-regexp">/rest/</span>v1/analyses       ← 路径根本不存在<br></code></pre>
+
+<p>PostgREST 找不到路径，返回 <code>PGRST125 Invalid path specified in request URL</code>——错误信息其实是<strong>精准的</strong>，只是没堆栈让人不知道从哪查。</p>
+<h3 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h3><p><code>.env.local</code> 改一行：</p>
+<pre class="highlight"><code class="hljs diff"><span class="hljs-deletion">- SUPABASE_URL=https://rvjgpyxorigsjxzkrbhu.supabase.co/rest/v1/</span><br><span class="hljs-addition">+ SUPABASE_URL=https://rvjgpyxorigsjxzkrbhu.supabase.co</span><br></code></pre>
+
+<p>实际耗时：从看到错误到 fix 完成，约 8 分钟。</p>
+<h3 id="这个-Debug-故事的几条心得"><a href="#这个-Debug-故事的几条心得" class="headerlink" title="这个 Debug 故事的几条心得"></a>这个 Debug 故事的几条心得</h3><table>
+<thead>
+<tr>
+<th>心得</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>配置类错误用诊断脚本，而不是改源码</strong></td>
+<td>写一段独立的连通性测试，比反复改 SDK 调用更快定位</td>
+</tr>
+<tr>
+<td><strong>脱敏打印是 AI 协作的必要技巧</strong></td>
+<td>让 AI 看真实凭据是错的，但「URL 长这样、Key 长 46 字符、前缀是 sb_publishable_」这种结构信息可以放心给</td>
+</tr>
+<tr>
+<td><strong>错误码搜文档，别搜文案</strong></td>
+<td><code>PGRST125</code> 比「Invalid path specified」精准 10 倍——错误码是稳定的，文案会随版本变</td>
+</tr>
+<tr>
+<td><strong>诊断脚本留在仓库里</strong></td>
+<td>我把 <code>scripts/check-supabase.mjs</code> 提交了，以后换环境直接 <code>node --env-file=.env.local scripts/check-supabase.mjs</code> 就能复测</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="阶段-5：部署与上线"><a href="#阶段-5：部署与上线" class="headerlink" title="阶段 5：部署与上线"></a>阶段 5：部署与上线</h2><p>这一步几乎没花什么时间，AI 当 Checklist 用：</p>
+<ul>
+<li>“我要部署到 Render Free Tier，给我一份从 GitHub 直连到环境变量配置的完整清单”</li>
+<li>“Next.js 16 在 Render 上有什么坑要注意？”</li>
+<li>“Render Free 实例休眠机制是什么，我要不要加 keepalive？”</li>
+</ul>
+<p>Claude 把所有 Checklist 列出来，我对着点按钮就行。唯一需要注意的是 Render Free 实例 15 分钟无访问会休眠，首次唤醒约 30 秒——这条 README 里要写清楚，不然演示时被以为是 bug。</p>
+<hr>
+<h2 id="复盘：5-条可复用的-AI-协作心得"><a href="#复盘：5-条可复用的-AI-协作心得" class="headerlink" title="复盘：5 条可复用的 AI 协作心得"></a>复盘：5 条可复用的 AI 协作心得</h2><p>写完这个项目，下面 5 条是我会持续用下去的：</p>
+<h3 id="1-让-AI-当「候选方案压缩器」，而不是「决策者」"><a href="#1-让-AI-当「候选方案压缩器」，而不是「决策者」" class="headerlink" title="1. 让 AI 当「候选方案压缩器」，而不是「决策者」"></a>1. 让 AI 当「候选方案压缩器」，而不是「决策者」</h3><p>技术选型、库对比、架构方案——让 AI 列出 3-5 个候选，每个标注优劣，你来拍板。<strong>永远不要让 AI 替你做架构决策</strong>，因为它不知道你的实际约束（团队偏好、运维能力、成本承受度）。</p>
+<h3 id="2-样板代码全权委托，但-Code-Review-不能省"><a href="#2-样板代码全权委托，但-Code-Review-不能省" class="headerlink" title="2. 样板代码全权委托，但 Code Review 不能省"></a>2. 样板代码全权委托，但 Code Review 不能省</h3><p>AI 生成的代码 90% 能用，但有 10% 是「过度设计」「不必要的抽象」「错误的库版本假设」。Review 时重点看：</p>
+<ul>
+<li>有没有引入用不到的依赖</li>
+<li>有没有把简单逻辑写复杂</li>
+<li>有没有套用过时的 API（特别是 Next.js 这种快速演进的框架）</li>
+</ul>
+<h3 id="3-Prompt-工程是反复对抗测试，不是一次写好"><a href="#3-Prompt-工程是反复对抗测试，不是一次写好" class="headerlink" title="3. Prompt 工程是反复对抗测试，不是一次写好"></a>3. Prompt 工程是反复对抗测试，不是一次写好</h3><p>第一版 Prompt 一定不够强约束。<strong>用真实数据跑 N 次，看到一次破坏就加一条约束</strong>，直到 0 破坏。三层防御（System Prompt + API 参数 + 后端校验）任何一层都不能省。</p>
+<h3 id="4-配置类错误优先用诊断脚本"><a href="#4-配置类错误优先用诊断脚本" class="headerlink" title="4. 配置类错误优先用诊断脚本"></a>4. 配置类错误优先用诊断脚本</h3><p>环境变量、API Key、URL 格式这类问题，<strong>不要在主代码里加 console.log 反复重启</strong>——让 AI 帮你写一个独立的诊断脚本，跑一次就能定位。脱敏打印是关键技巧。</p>
+<h3 id="5-把-AI-当成「不会累的搭档」，而不是「魔法工具」"><a href="#5-把-AI-当成「不会累的搭档」，而不是「魔法工具」" class="headerlink" title="5. 把 AI 当成「不会累的搭档」，而不是「魔法工具」"></a>5. 把 AI 当成「不会累的搭档」，而不是「魔法工具」</h3><p>AI 不会一句话变出整个项目。你要做的是：</p>
+<ul>
+<li>把任务拆成 5-20 分钟一段的小问题</li>
+<li>每一段都给清楚的上下文（目标 + 现状 + 约束）</li>
+<li>拿到结果立刻验证，错了立刻反馈</li>
+<li>节奏快、迭代多、信任但 review</li>
+</ul>
+<p>这种节奏下，半天能做的事比你想象的多得多。</p>
+<hr>
+<h2 id="项目链接"><a href="#项目链接" class="headerlink" title="项目链接"></a>项目链接</h2><ul>
+<li>🌐 线上 Demo：<a target="_blank" rel="noopener" href="https://stock-ai-r7qr.onrender.com/">https://stock-ai-r7qr.onrender.com</a>（Render Free 首次唤醒约 30 秒）</li>
+<li>📦 源码：<a target="_blank" rel="noopener" href="https://github.com/xwwcyber/stock-ai">https://github.com/xwwcyber/stock-ai</a></li>
+<li>📄 完整提交文档：<a target="_blank" rel="noopener" href="https://github.com/xwwcyber/stock-ai/blob/main/SUBMISSION.md">https://github.com/xwwcyber/stock-ai/blob/main/SUBMISSION.md</a></li>
+</ul>
+<blockquote>
+<p><strong>免责声明</strong>：本项目仅作技术演示与学习用途，AI 分析结果不构成任何投资建议。</p>
+</blockquote>
+
+  </div>
+  <div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2026/03/18/009/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">关于claude code的使用体验 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="gitalk-container"></div>
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+  
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+  
+<script src="/js/lib/md5.min.js"></script>
+
+  <script>
+    var gitalk = new Gitalk({
+      clientID: 'Ov23liPO3SVybUfFfbcH',
+      clientSecret: '22ed759f4b78629a93e8591c93ea2f210e86d3b9',
+      repo: 'blog-comments',
+      owner: 'xwwcyber',
+      admin: ["xwwcyber"],
+      id: md5(location.pathname),
+      distractionFreeMode: false,
+      language: 'zh-CN',
+      labels: ["Gitalk"],
+      perPage: 10
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E7%94%A8-Claude-Code-%E5%8D%8A%E5%A4%A9%E5%81%9A%E4%BA%86%E4%B8%80%E4%B8%AA%E5%85%A8%E6%A0%88-AI-%E8%82%A1%E7%A5%A8%E5%88%86%E6%9E%90%E9%9D%A2%E6%9D%BF"><span class="toc-text">我用 Claude Code 半天做了一个全栈 AI 股票分析面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%86%99%E8%BF%99%E7%AF%87"><span class="toc-text">为什么写这篇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">整体工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-1%EF%BC%9A%E9%9C%80%E6%B1%82%E6%8B%86%E8%A7%A3-x2F-%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-text">阶段 1：需求拆解 &#x2F; 技术选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-2%EF%BC%9A%E8%84%9A%E6%89%8B%E6%9E%B6%E4%B8%8E%E6%A0%B7%E6%9D%BF%E4%BB%A3%E7%A0%81"><span class="toc-text">阶段 2：脚手架与样板代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-3%EF%BC%9APrompt-%E8%AE%BE%E8%AE%A1%E4%B8%8E-LLM-%E9%9B%86%E6%88%90%EF%BC%88%E9%87%8D%E5%A4%B4%E6%88%8F%EF%BC%89"><span class="toc-text">阶段 3：Prompt 设计与 LLM 集成（重头戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9ALLM-%E9%BB%98%E8%AE%A4%E9%9D%9E%E5%B8%B8%E5%96%9C%E6%AC%A2%E3%80%8C%E4%B9%B1%E8%AF%B4%E8%AF%9D%E3%80%8D"><span class="toc-text">问题：LLM 默认非常喜欢「乱说话」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%EF%BC%9A%E4%B8%89%E5%B1%82%E9%98%B2%E5%BE%A1"><span class="toc-text">解法：三层防御</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%EF%BC%9ASystem-Prompt-%E5%86%99%E6%AD%BB%E6%A0%BC%E5%BC%8F%E5%A5%91%E7%BA%A6"><span class="toc-text">第一层：System Prompt 写死格式契约</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%EF%BC%9AAPI-%E8%B0%83%E7%94%A8%E5%B1%82%E5%BC%BA%E5%88%B6-JSON-%E6%A8%A1%E5%BC%8F"><span class="toc-text">第二层：API 调用层强制 JSON 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%EF%BC%9A%E5%90%8E%E7%AB%AF%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A0%A1%E9%AA%8C"><span class="toc-text">第三层：后端运行时校验</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-4%EF%BC%9ADebug%EF%BC%88%E6%9C%80%E4%BD%93%E7%8E%B0-AI-%E4%BB%B7%E5%80%BC%E7%9A%84%E7%8E%AF%E8%8A%82%EF%BC%89"><span class="toc-text">阶段 4：Debug（最体现 AI 价值的环节）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1"><span class="toc-text">现象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%8E%92%E6%9F%A5-vs-AI-%E5%8D%8F%E4%BD%9C%E6%8E%92%E6%9F%A5"><span class="toc-text">传统排查 vs AI 协作排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E5%9B%A0"><span class="toc-text">根因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D"><span class="toc-text">修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%AA-Debug-%E6%95%85%E4%BA%8B%E7%9A%84%E5%87%A0%E6%9D%A1%E5%BF%83%E5%BE%97"><span class="toc-text">这个 Debug 故事的几条心得</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-5%EF%BC%9A%E9%83%A8%E7%BD%B2%E4%B8%8E%E4%B8%8A%E7%BA%BF"><span class="toc-text">阶段 5：部署与上线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98%EF%BC%9A5-%E6%9D%A1%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84-AI-%E5%8D%8F%E4%BD%9C%E5%BF%83%E5%BE%97"><span class="toc-text">复盘：5 条可复用的 AI 协作心得</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AE%A9-AI-%E5%BD%93%E3%80%8C%E5%80%99%E9%80%89%E6%96%B9%E6%A1%88%E5%8E%8B%E7%BC%A9%E5%99%A8%E3%80%8D%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E3%80%8C%E5%86%B3%E7%AD%96%E8%80%85%E3%80%8D"><span class="toc-text">1. 让 AI 当「候选方案压缩器」，而不是「决策者」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B7%E6%9D%BF%E4%BB%A3%E7%A0%81%E5%85%A8%E6%9D%83%E5%A7%94%E6%89%98%EF%BC%8C%E4%BD%86-Code-Review-%E4%B8%8D%E8%83%BD%E7%9C%81"><span class="toc-text">2. 样板代码全权委托，但 Code Review 不能省</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Prompt-%E5%B7%A5%E7%A8%8B%E6%98%AF%E5%8F%8D%E5%A4%8D%E5%AF%B9%E6%8A%97%E6%B5%8B%E8%AF%95%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%B8%80%E6%AC%A1%E5%86%99%E5%A5%BD"><span class="toc-text">3. Prompt 工程是反复对抗测试，不是一次写好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%85%8D%E7%BD%AE%E7%B1%BB%E9%94%99%E8%AF%AF%E4%BC%98%E5%85%88%E7%94%A8%E8%AF%8A%E6%96%AD%E8%84%9A%E6%9C%AC"><span class="toc-text">4. 配置类错误优先用诊断脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%8A%8A-AI-%E5%BD%93%E6%88%90%E3%80%8C%E4%B8%8D%E4%BC%9A%E7%B4%AF%E7%9A%84%E6%90%AD%E6%A1%A3%E3%80%8D%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E3%80%8C%E9%AD%94%E6%B3%95%E5%B7%A5%E5%85%B7%E3%80%8D"><span class="toc-text">5. 把 AI 当成「不会累的搭档」，而不是「魔法工具」</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-text">项目链接</span></a></li></ol>
+</div>
+
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E7%94%A8-Claude-Code-%E5%8D%8A%E5%A4%A9%E5%81%9A%E4%BA%86%E4%B8%80%E4%B8%AA%E5%85%A8%E6%A0%88-AI-%E8%82%A1%E7%A5%A8%E5%88%86%E6%9E%90%E9%9D%A2%E6%9D%BF"><span class="toc-text">我用 Claude Code 半天做了一个全栈 AI 股票分析面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%86%99%E8%BF%99%E7%AF%87"><span class="toc-text">为什么写这篇</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">整体工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-1%EF%BC%9A%E9%9C%80%E6%B1%82%E6%8B%86%E8%A7%A3-x2F-%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-text">阶段 1：需求拆解 &#x2F; 技术选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-2%EF%BC%9A%E8%84%9A%E6%89%8B%E6%9E%B6%E4%B8%8E%E6%A0%B7%E6%9D%BF%E4%BB%A3%E7%A0%81"><span class="toc-text">阶段 2：脚手架与样板代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-3%EF%BC%9APrompt-%E8%AE%BE%E8%AE%A1%E4%B8%8E-LLM-%E9%9B%86%E6%88%90%EF%BC%88%E9%87%8D%E5%A4%B4%E6%88%8F%EF%BC%89"><span class="toc-text">阶段 3：Prompt 设计与 LLM 集成（重头戏）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9ALLM-%E9%BB%98%E8%AE%A4%E9%9D%9E%E5%B8%B8%E5%96%9C%E6%AC%A2%E3%80%8C%E4%B9%B1%E8%AF%B4%E8%AF%9D%E3%80%8D"><span class="toc-text">问题：LLM 默认非常喜欢「乱说话」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%EF%BC%9A%E4%B8%89%E5%B1%82%E9%98%B2%E5%BE%A1"><span class="toc-text">解法：三层防御</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%EF%BC%9ASystem-Prompt-%E5%86%99%E6%AD%BB%E6%A0%BC%E5%BC%8F%E5%A5%91%E7%BA%A6"><span class="toc-text">第一层：System Prompt 写死格式契约</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%EF%BC%9AAPI-%E8%B0%83%E7%94%A8%E5%B1%82%E5%BC%BA%E5%88%B6-JSON-%E6%A8%A1%E5%BC%8F"><span class="toc-text">第二层：API 调用层强制 JSON 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%EF%BC%9A%E5%90%8E%E7%AB%AF%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A0%A1%E9%AA%8C"><span class="toc-text">第三层：后端运行时校验</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-4%EF%BC%9ADebug%EF%BC%88%E6%9C%80%E4%BD%93%E7%8E%B0-AI-%E4%BB%B7%E5%80%BC%E7%9A%84%E7%8E%AF%E8%8A%82%EF%BC%89"><span class="toc-text">阶段 4：Debug（最体现 AI 价值的环节）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1"><span class="toc-text">现象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%8E%92%E6%9F%A5-vs-AI-%E5%8D%8F%E4%BD%9C%E6%8E%92%E6%9F%A5"><span class="toc-text">传统排查 vs AI 协作排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E5%9B%A0"><span class="toc-text">根因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D"><span class="toc-text">修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%AA-Debug-%E6%95%85%E4%BA%8B%E7%9A%84%E5%87%A0%E6%9D%A1%E5%BF%83%E5%BE%97"><span class="toc-text">这个 Debug 故事的几条心得</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5-5%EF%BC%9A%E9%83%A8%E7%BD%B2%E4%B8%8E%E4%B8%8A%E7%BA%BF"><span class="toc-text">阶段 5：部署与上线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98%EF%BC%9A5-%E6%9D%A1%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84-AI-%E5%8D%8F%E4%BD%9C%E5%BF%83%E5%BE%97"><span class="toc-text">复盘：5 条可复用的 AI 协作心得</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AE%A9-AI-%E5%BD%93%E3%80%8C%E5%80%99%E9%80%89%E6%96%B9%E6%A1%88%E5%8E%8B%E7%BC%A9%E5%99%A8%E3%80%8D%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E3%80%8C%E5%86%B3%E7%AD%96%E8%80%85%E3%80%8D"><span class="toc-text">1. 让 AI 当「候选方案压缩器」，而不是「决策者」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%B7%E6%9D%BF%E4%BB%A3%E7%A0%81%E5%85%A8%E6%9D%83%E5%A7%94%E6%89%98%EF%BC%8C%E4%BD%86-Code-Review-%E4%B8%8D%E8%83%BD%E7%9C%81"><span class="toc-text">2. 样板代码全权委托，但 Code Review 不能省</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Prompt-%E5%B7%A5%E7%A8%8B%E6%98%AF%E5%8F%8D%E5%A4%8D%E5%AF%B9%E6%8A%97%E6%B5%8B%E8%AF%95%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%B8%80%E6%AC%A1%E5%86%99%E5%A5%BD"><span class="toc-text">3. Prompt 工程是反复对抗测试，不是一次写好</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%85%8D%E7%BD%AE%E7%B1%BB%E9%94%99%E8%AF%AF%E4%BC%98%E5%85%88%E7%94%A8%E8%AF%8A%E6%96%AD%E8%84%9A%E6%9C%AC"><span class="toc-text">4. 配置类错误优先用诊断脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%8A%8A-AI-%E5%BD%93%E6%88%90%E3%80%8C%E4%B8%8D%E4%BC%9A%E7%B4%AF%E7%9A%84%E6%90%AD%E6%A1%A3%E3%80%8D%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E3%80%8C%E9%AD%94%E6%B3%95%E5%B7%A5%E5%85%B7%E3%80%8D"><span class="toc-text">5. 把 AI 当成「不会累的搭档」，而不是「魔法工具」</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E9%93%BE%E6%8E%A5"><span class="toc-text">项目链接</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-05-21</div>
+        <a href="/2026/05/21/012/"><div class="recent-posts-item-content">AI股票分析</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-03-18</div>
+        <a href="/2026/03/18/009/"><div class="recent-posts-item-content">关于claude code的使用体验</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-03-13</div>
+        <a href="/2026/03/13/010/"><div class="recent-posts-item-content">自建影视聚合平台</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-27</div>
+        <a href="/2026/02/27/011/"><div class="recent-posts-item-content">对AI辅助编程的思考和摘录</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          xww的个人博客
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
