@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="天空是蔚蓝色，窗外有千纸鹤">
+  <link 
+    rel="icon" 
+    href="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0">
+  <title>Qt 实战：从零搭建一个工业水泵监控 HMI</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Qt 实战：从零搭建一个工业水泵监控 HMI">
+    
+    
+      <meta 
+        property="og:url" 
+        content="http://example.com/2026/02/17/0013/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0">
+    
+    
+      <meta 
+        property="og:img" 
+        content="用 Qt 6 + Modbus TCP + QtCharts + SQLite，350 行代码做一个能远程启停、实时画曲线、超限报警并独立部署的水泵上位机。">
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-02-17">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-02-17">
+      <meta 
+        property="og:article:author" 
+        content="xww">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Qt">
+        
+          <meta 
+            property="og:article:tag" 
+            content="AI">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+    
+    <link rel="prefetch" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" as="script">
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+  <body>
+    <div class="wrapper">
+       
+      <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+        <img 
+          class="navbar-logo-img"
+          width="32"
+          height="32"
+          src="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0" 
+          alt="blog logo">
+      
+      <span class="navbar-logo-dsc">xww的个人博客</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav> 
+      
+      <div 
+        id="local-search" 
+        style="display: none">
+        <input
+          class="navbar-menu-item"
+          id="search-input"
+          placeholder="请输入搜索内容..." />
+        <div id="search-content"></div>
+      </div>
+      
+      <div class="section-wrap">
+        <div class="container">
+          <div class="columns">
+            <aside class="left-column">
+              
+              <div class="card card-author">
+                
+  <img 
+    src="https://thirdqq.qlogo.cn/ek_qqapp/AQVnr8QREa6INibZC4Expz3kqqh3QC0n23gujKR4rG0dfqPUCibKFrb72PLvaGQxyBZBOTIqgt/0" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">xww</p>
+<p class="author-description">天空是蔚蓝色</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>13</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>3</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>10</span>
+    <span>标签</span>
+  </a>
+</div>
+
+  <div class="author-card-society">
+    
+      <div class="author-card-society-icon">
+        <a target="_blank" rel="noopener" href="https://github.com/xwwcyber">
+          <i class="iconfont icon-github society-icon"></i>
+        </a>
+      </div>
+    
+  </div>
+
+              </div>
+               <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Qt-%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B7%A5%E4%B8%9A%E6%B0%B4%E6%B3%B5%E7%9B%91%E6%8E%A7-HMI"><span class="toc-text">Qt 实战：从零搭建一个工业水泵监控 HMI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%AD%90%EF%BC%9A%E5%85%88%E7%9C%8B%E6%95%88%E6%9E%9C%E5%86%8D%E5%86%B3%E5%AE%9A%E8%A6%81%E4%B8%8D%E8%A6%81%E7%9C%8B"><span class="toc-text">引子：先看效果再决定要不要看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-1-%E7%AB%A0-%C2%B7-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">第 1 章 · 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Qt-%E5%AE%89%E8%A3%85%E4%B8%8E%E6%A8%A1%E5%9D%97"><span class="toc-text">1.1 Qt 安装与模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AE%89%E8%A3%85%E4%B8%80%E4%B8%AA-Modbus-Slave-%E6%A8%A1%E6%8B%9F%E5%99%A8"><span class="toc-text">1.2 安装一个 Modbus Slave 模拟器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BA%A6%E5%AE%9A"><span class="toc-text">1.3 项目目录约定</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-2-%E7%AB%A0-%C2%B7-CMake-%E9%A1%B9%E7%9B%AE%E9%AA%A8%E6%9E%B6"><span class="toc-text">第 2 章 · CMake 项目骨架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-CMakeLists-txt-%E5%85%B3%E9%94%AE%E8%A1%8C%E8%A7%A3%E8%AF%BB"><span class="toc-text">2.1 CMakeLists.txt 关键行解读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-main-cpp-%E6%B2%A1%E4%BB%80%E4%B9%88%E5%A5%BD%E8%AE%B2%E7%9A%84"><span class="toc-text">2.2 main.cpp 没什么好讲的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%85%88%E8%B7%91%E4%B8%80%E4%B8%8B%E7%A9%BA%E7%AA%97%E5%8F%A3"><span class="toc-text">2.3 先跑一下空窗口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-3-%E7%AB%A0-%C2%B7-%E4%B8%BB%E7%95%8C%E9%9D%A2%E5%B8%83%E5%B1%80"><span class="toc-text">第 3 章 · 主界面布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%A4%B4%E6%96%87%E4%BB%B6%E5%85%88%E5%88%97%E5%87%BA%E5%85%A8%E9%83%A8%E6%88%90%E5%91%98"><span class="toc-text">3.1 头文件先列出全部成员</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-1%EF%BC%9AQtCharts-%E5%9C%A8-Qt5-x2F-Qt6-%E7%9A%84%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%B7%AE%E5%BC%82"><span class="toc-text">🟡 坑点 1：QtCharts 在 Qt5 &#x2F; Qt6 的命名空间差异</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%B8%B2%E8%81%94%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3.2 构造函数串联初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-setupUI%EF%BC%9A%E7%BA%AF%E4%BB%A3%E7%A0%81%E6%90%AD%E5%87%BA%E4%B8%BB%E7%95%8C%E9%9D%A2"><span class="toc-text">3.3 setupUI：纯代码搭出主界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E9%85%8D%E8%89%B2%E5%8F%96%E8%88%8D"><span class="toc-text">3.4 配色取舍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-4-%E7%AB%A0-%C2%B7-Modbus-TCP-%E9%80%9A%E4%BF%A1"><span class="toc-text">第 4 章 · Modbus TCP 通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AF%84%E5%AD%98%E5%99%A8%E5%9C%B0%E5%9D%80%E7%BA%A6%E5%AE%9A"><span class="toc-text">4.1 寄存器地址约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E8%BF%9E%E6%8E%A5%EF%BC%9AQModbusTcpClient-%E4%B8%89%E4%BB%B6%E5%A5%97"><span class="toc-text">4.2 连接：QModbusTcpClient 三件套</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-2%EF%BC%9A%E6%B0%B8%E8%BF%9C%E8%A6%81%E7%BB%99%E7%94%A8%E6%88%B7%E5%8F%AF%E8%A7%81%E7%9A%84%E5%A4%B1%E8%B4%A5%E5%8F%8D%E9%A6%88"><span class="toc-text">🟡 坑点 2：永远要给用户可见的失败反馈</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%AE%9A%E6%97%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E5%BC%82%E6%AD%A5%E5%9B%9E%E8%B0%83"><span class="toc-text">4.3 定时读取与异步回调</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-5-%E7%AB%A0-%C2%B7-%E5%AE%9E%E6%97%B6%E5%8E%8B%E5%8A%9B%E6%9B%B2%E7%BA%BF"><span class="toc-text">第 5 章 · 实时压力曲线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-QtCharts-%E5%9F%BA%E7%A1%80%E4%B8%89%E4%BB%B6%E5%A5%97"><span class="toc-text">5.1 QtCharts 基础三件套</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%EF%BC%9A%E5%8F%AA%E6%98%BE%E7%A4%BA%E6%9C%80%E8%BF%91-60-%E7%A7%92"><span class="toc-text">5.2 滑动窗口：只显示最近 60 秒</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-6-%E7%AB%A0-%C2%B7-%E6%8A%A5%E8%AD%A6%E7%B3%BB%E7%BB%9F"><span class="toc-text">第 6 章 · 报警系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E6%8A%A5%E8%AD%A6%E4%B8%89%E4%BB%B6%E4%BA%8B%EF%BC%9A%E5%BC%B9%E7%AA%97%E3%80%81%E5%8F%98%E7%BA%A2%E3%80%81%E8%AE%B0%E6%97%A5%E5%BF%97"><span class="toc-text">6.1 报警三件事：弹窗、变红、记日志</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-3%EF%BC%9A%E7%94%A8-m-alarmActive-%E9%98%B2%E6%AD%A2%E5%8F%8D%E5%A4%8D%E5%BC%B9%E7%AA%97"><span class="toc-text">🟡 坑点 3：用 m_alarmActive 防止反复弹窗</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E7%9A%84%E6%A0%B7%E5%BC%8F%E8%81%94%E5%8A%A8"><span class="toc-text">6.2 恢复正常的样式联动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-7-%E7%AB%A0-%C2%B7-%E6%8A%A5%E8%AD%A6%E6%97%A5%E5%BF%97%EF%BC%9ASQLite-%E8%A1%A8%E6%A0%BC"><span class="toc-text">第 7 章 · 报警日志：SQLite + 表格</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E4%B8%80%E6%AC%A1%E6%80%A7%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">7.1 一次性初始化数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%86%99%E5%85%A5%E4%B8%80%E6%9D%A1%E6%8A%A5%E8%AD%A6"><span class="toc-text">7.2 写入一条报警</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-4%EF%BC%9A%E6%B0%B8%E8%BF%9C%E7%94%A8%E5%8F%82%E6%95%B0%E5%8C%96%E6%9F%A5%E8%AF%A2"><span class="toc-text">🟡 坑点 4：永远用参数化查询</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-8-%E7%AB%A0-%C2%B7-%E6%B0%B4%E6%B3%B5%E6%8E%A7%E5%88%B6%EF%BC%9A%E5%86%99%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">第 8 章 · 水泵控制：写寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-togglePump%EF%BC%9A%E5%8F%91%E4%B8%80%E6%9D%A1%E5%86%99%E5%85%A5%E8%AF%B7%E6%B1%82"><span class="toc-text">8.1 togglePump：发一条写入请求</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-5%EF%BC%9A%E5%86%99%E5%85%A5%E5%A4%B1%E8%B4%A5%E6%97%B6%E4%B8%8D%E8%A6%81%E4%BF%AE%E6%94%B9%E6%9C%AC%E5%9C%B0%E7%8A%B6%E6%80%81"><span class="toc-text">🟡 坑点 5：写入失败时不要修改本地状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-9-%E7%AB%A0-%C2%B7-%E6%8C%89%E9%9C%80%E9%87%87%E9%9B%86%EF%BC%9A%E5%81%9C%E6%B3%B5%E5%B0%B1%E6%B8%85%E9%9B%B6"><span class="toc-text">第 9 章 · 按需采集：停泵就清零</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E4%B8%80%E4%B8%AA%E5%8F%8D%E7%9B%B4%E8%A7%89%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="toc-text">9.1 一个反直觉的设计决策</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-resetDisplay%EF%BC%9A%E7%95%8C%E9%9D%A2%E5%BD%92%E9%9B%B6"><span class="toc-text">9.2 resetDisplay：界面归零</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%EF%BC%9AHMI-%E8%AF%A5%E4%B8%8D%E8%AF%A5%E4%B8%80%E7%9B%B4%E7%9B%91%E6%B5%8B%EF%BC%9F"><span class="toc-text">9.3 设计哲学：HMI 该不该一直监测？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-10-%E7%AB%A0-%C2%B7-%E8%BF%9B%E9%98%B6%EF%BC%9A%E6%99%BA%E8%83%BD-Mock-%E8%AE%A9%E5%8E%8B%E5%8A%9B%E8%81%94%E5%8A%A8"><span class="toc-text">第 10 章 · 进阶：智能 Mock 让压力联动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E6%A8%A1%E6%8B%9F%E5%99%A8%E6%98%AF%E2%80%9D%E7%99%BD%E6%9D%BF%E2%80%9D%EF%BC%8C%E4%B8%8D%E6%98%AF%E2%80%9D%E8%AE%BE%E5%A4%87%E2%80%9D"><span class="toc-text">10.1 模拟器是”白板”，不是”设备”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-pymodbus-%E6%99%BA%E8%83%BD%E6%A8%A1%E6%8B%9F%E8%84%9A%E6%9C%AC"><span class="toc-text">10.2 pymodbus 智能模拟脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-%E6%B5%8B%E8%AF%95%E6%8A%A5%E8%AD%A6"><span class="toc-text">10.3 测试报警</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-11-%E7%AB%A0-%C2%B7-%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%84%B1%E7%A6%BB-Qt-%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8C"><span class="toc-text">第 11 章 · 部署：脱离 Qt 安装独立运行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%85%88%E5%88%87%E5%88%B0-Release-%E6%9E%84%E5%BB%BA"><span class="toc-text">11.1 先切到 Release 构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E8%B7%91-windeployqt"><span class="toc-text">11.2 跑 windeployqt</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-6%EF%BC%9AMSYS2-%E5%92%8C-Qt-%E5%AE%98%E6%96%B9%E7%9A%84-windeployqt-%E4%B8%8D%E8%83%BD%E6%B7%B7%E7%94%A8"><span class="toc-text">🟡 坑点 6：MSYS2 和 Qt 官方的 windeployqt 不能混用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-%E5%93%AA%E4%BA%9B%E6%96%87%E4%BB%B6%E5%8F%AF%E4%BB%A5%E5%88%A0"><span class="toc-text">11.3 哪些文件可以删</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-12-%E7%AB%A0-%C2%B7-%E9%82%A3%E4%BA%9B%E6%88%91%E4%BB%A5%E4%B8%BA%E6%98%AF-bug-%E7%9A%84%E7%9E%AC%E9%97%B4"><span class="toc-text">第 12 章 · 那些我以为是 bug 的瞬间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%90%AF%E5%8A%A8%E6%B2%A1%E6%9C%89%E5%8F%8D%E5%BA%94%E2%80%9D"><span class="toc-text">💬 “为什么启动没有反应”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%98%BE%E7%A4%BA%E5%8E%8B%E5%8A%9B%EF%BC%8C%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E6%B2%A1%E6%9C%89%EF%BC%8C%E6%98%AF%E4%B8%8D%E7%94%A8%E6%98%BE%E7%A4%BA%E5%90%97%E2%80%9D"><span class="toc-text">💬 “为什么只显示压力，其他数据没有，是不用显示吗”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9CModbus-Slave-%E9%87%8C%E9%9D%A2%E9%82%A3%E4%B8%AA-2-%E7%9A%84%E5%80%BC%E6%98%AF-0-%E8%BF%98%E6%98%AF-1-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%E2%80%9D"><span class="toc-text">💬 “Modbus Slave 里面那个 2 的值是 0 还是 1 有什么区别”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%98%E6%88%90%E9%9B%B6%E4%BA%86%E4%B9%8B%E5%90%8E%EF%BC%8C%E8%BF%98%E6%98%AF%E4%BC%9A%E6%A3%80%E6%B5%8B%E5%88%B0%E5%8E%8B%E5%8A%9B%E2%80%9D"><span class="toc-text">💬 “为什么变成零了之后，还是会检测到压力”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%81%9C%E6%AD%A2%E6%B0%B4%E6%B3%B5%E4%B9%8B%E5%90%8E%E8%BF%98%E5%9C%A8%E6%A3%80%E6%B5%8B%E5%8E%8B%E5%8A%9B%E2%80%9D"><span class="toc-text">💬 “为什么停止水泵之后还在检测压力”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9CDebug-%E5%88%87%E6%8D%A2%E5%88%B0-Release-%E6%80%8E%E4%B9%88%E5%88%87%E6%8D%A2%E2%80%9D"><span class="toc-text">💬 “Debug 切换到 Release 怎么切换”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9Cwindeployqt-%E5%8A%A0-PATH-%E6%98%AF%E5%B9%B2%E4%BB%80%E4%B9%88%E7%94%A8%E7%9A%84%E2%80%9D"><span class="toc-text">💬 “windeployqt 加 PATH 是干什么用的”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E4%B8%8B%E5%81%9C%E6%AD%A2%E6%B0%B4%E6%B3%B5%EF%BC%8C%E6%8C%89%E9%92%AE%E8%BF%98%E6%98%AF%E5%8F%98%E6%88%90%E5%90%AF%E5%8A%A8%E6%B0%B4%E6%B3%B5%E2%80%9D"><span class="toc-text">💬 “为什么按下停止水泵，按钮还是变成启动水泵”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E6%80%BB%E7%BB%93%EF%BC%9A%E6%96%B0%E6%89%8B%E9%97%AE%E9%A2%98%E4%B8%8D%E4%B8%A2%E4%BA%BA"><span class="toc-text">💬 总结：新手问题不丢人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-13-%E7%AB%A0-%C2%B7-%E5%A4%8D%E7%9B%98-%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="toc-text">第 13 章 · 复盘 + 下一步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E8%BF%99%E5%A5%97%E6%9E%B6%E6%9E%84%E8%83%BD%E7%9B%B4%E6%8E%A5%E6%8E%A5%E7%9C%9F%E5%AE%9E-PLC-%E5%90%97%EF%BC%9F"><span class="toc-text">12.1 这套架构能直接接真实 PLC 吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E6%B2%A1%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-text">12.2 这个项目没做的事</span></a></li></ol></li></ol></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">
+        <div class="categories-list-item">
+          技术文章
+          <span class="categories-list-item-badge">6</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tips/">
+        <div class="categories-list-item">
+          tips
+          <span class="categories-list-item-badge">5</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI/">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/claude/" 
+        title="claude">
+        <div class="tags-list-item">claude</div>
+      </a>
+    
+      <a 
+        href="/tags/MySQL/" 
+        title="MySQL">
+        <div class="tags-list-item">MySQL</div>
+      </a>
+    
+      <a 
+        href="/tags/git/" 
+        title="git">
+        <div class="tags-list-item">git</div>
+      </a>
+    
+      <a 
+        href="/tags/github/" 
+        title="github">
+        <div class="tags-list-item">github</div>
+      </a>
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/Qt/" 
+        title="Qt">
+        <div class="tags-list-item">Qt</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" 
+        title="数据库">
+        <div class="tags-list-item">数据库</div>
+      </a>
+    
+      <a 
+        href="/tags/OpenSource/" 
+        title="OpenSource">
+        <div class="tags-list-item">OpenSource</div>
+      </a>
+    
+      <a 
+        href="/tags/markdown/" 
+        title="markdown">
+        <div class="tags-list-item">markdown</div>
+      </a>
+    
+      <a 
+        href="/tags/libVLC/" 
+        title="libVLC">
+        <div class="tags-list-item">libVLC</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+            <main class="main-column">
+              
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Qt 实战：从零搭建一个工业水泵监控 HMI
+    </h1>
+  </header>
+  
+    <div class="post-meta post-show-meta">
+      <a href="https://github.com/xwwcyber/xwwcyber.github.io/edit/main/source/_posts/0013.md" target="_blank">编辑原文</a>
+    </div>
+  
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-02-17T00:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-02-17</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" 
+          class="post-meta-link">
+          技术文章
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>7.9k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Qt/" 
+            class="post-meta-link">
+            Qt
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/AI/" 
+            class="post-meta-link">
+            AI
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h1 id="Qt-实战：从零搭建一个工业水泵监控-HMI"><a href="#Qt-实战：从零搭建一个工业水泵监控-HMI" class="headerlink" title="Qt 实战：从零搭建一个工业水泵监控 HMI"></a>Qt 实战：从零搭建一个工业水泵监控 HMI</h1><blockquote>
+<p>Modbus TCP + 实时图表 + 报警日志 + 可独立部署 —— 一篇带你走完上位机的全部基础流程</p>
+</blockquote>
+<h2 id="引子：先看效果再决定要不要看"><a href="#引子：先看效果再决定要不要看" class="headerlink" title="引子：先看效果再决定要不要看"></a>引子：先看效果再决定要不要看</h2><p>最近在学 Qt，找了个有点工业味儿的练手项目：写一个 <strong>水泵监控上位机</strong>。它要做的事情很简单：</p>
+<ul>
+<li>通过 <strong>Modbus TCP</strong> 协议，每秒去读一次下位机（PLC 或模拟器）的压力、温度、水泵状态</li>
+<li>把压力画成一条<strong>实时滚动曲线</strong></li>
+<li>压力超过阈值就<strong>弹窗报警</strong>，并把记录写进 SQLite 数据库</li>
+<li>一个按钮可以<strong>远程启停水泵</strong></li>
+</ul>
+<p>跑起来大概是这样的（贴一张你自己截的运行截图）：</p>
+<p><img src="/%E5%9B%BE%E4%BD%8D%E7%BD%AE%E5%8D%A0%E4%BD%8D" alt="PumpHMI 运行截图" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/%E5%9B%BE%E4%BD%8D%E7%BD%AE%E5%8D%A0%E4%BD%8D" class="lozad post-image"></p>
+<p>技术栈：<strong>Qt 6.11 + MinGW 64-bit + QtCharts + QtSerialBus + QtSql</strong>。<br>代码量：两个 cpp &#x2F; h 文件，不到 350 行。</p>
+<p>这篇文章会从<strong>空白工程</strong>开始，一步一步把它做完。中途我会把自己踩过的几个<strong>反直觉的坑</strong>单独点出来 —— 因为说实话，这类小项目的难点不在 Qt 本身，而在”我以为是 bug、其实是设计如此”的瞬间。</p>
+<p><strong>适合什么样的读者</strong>：</p>
+<ul>
+<li>写过几行 Qt 但还没做过完整项目的同学</li>
+<li>学嵌入式 &#x2F; 工控，想了解上位机怎么写的开发者</li>
+<li>对”Modbus 到底是什么”还没具象认识的人</li>
+</ul>
+<p><strong>不太适合</strong>：已经在工厂调过几年 HMI 的老师傅 —— 这篇文章里讲的设计取舍你早就熟了。</p>
+<hr>
+<h2 id="第-1-章-·-环境准备"><a href="#第-1-章-·-环境准备" class="headerlink" title="第 1 章 · 环境准备"></a>第 1 章 · 环境准备</h2><h3 id="1-1-Qt-安装与模块"><a href="#1-1-Qt-安装与模块" class="headerlink" title="1.1 Qt 安装与模块"></a>1.1 Qt 安装与模块</h3><p>去 <a target="_blank" rel="noopener" href="https://www.qt.io/download-qt-installer">qt.io</a> 下 Qt Online Installer，登录账号（个人免费），选 <strong>Qt 6.11.x</strong>，编译器选 <strong>MinGW 64-bit</strong>。</p>
+<p><strong>必须勾选的模块</strong>（默认有些不装）：</p>
+<ul>
+<li>✅ Qt Charts（实时曲线用）</li>
+<li>✅ Qt Serial Bus（Modbus 在这个模块下）</li>
+<li>Qt Sql、Qt Widgets 是核心模块，自动安装</li>
+</ul>
+<p>装完之后 Qt 大概在这种路径下：</p>
+<pre class="highlight"><code class="hljs apache"><span class="hljs-attribute">D</span>:\App\Qt6.<span class="hljs-number">11</span>\<span class="hljs-number">6</span>.<span class="hljs-number">11</span>.<span class="hljs-number">1</span>\mingw_64\<br></code></pre>
+
+<p>记住这个路径，第 11 章部署时还要用。</p>
+<h3 id="1-2-安装一个-Modbus-Slave-模拟器"><a href="#1-2-安装一个-Modbus-Slave-模拟器" class="headerlink" title="1.2 安装一个 Modbus Slave 模拟器"></a>1.2 安装一个 Modbus Slave 模拟器</h3><p>HMI 是”上位机”，它必须有个”下位机”才能通信。真实场景里下位机是 PLC，开发时我们用模拟器代替。Windows 上推荐 <strong>Witte Software</strong> 的 <strong>Modbus Slave</strong>（30 天试用，足够学习）：</p>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://www.modbustools.com/modbus_slave.html">modbustools.com</a></p>
+<p>装好后<strong>用管理员身份运行</strong>（因为 502 端口在 Windows 上需要管理员权限，这是头号大坑）。配置：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Connection</td>
+<td>Modbus TCP&#x2F;IP</td>
+</tr>
+<tr>
+<td>Port</td>
+<td>502</td>
+</tr>
+<tr>
+<td>Slave ID</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>03 Holding Register</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Quantity</td>
+<td>3（覆盖地址 0、1、2）</td>
+</tr>
+</tbody></table>
+<p>主窗口会显示三个寄存器的当前值，<strong>双击任何一个数字可以手动编辑</strong> —— 这是我们后面调试时主要的操作。</p>
+<h3 id="1-3-项目目录约定"><a href="#1-3-项目目录约定" class="headerlink" title="1.3 项目目录约定"></a>1.3 项目目录约定</h3><p>新建一个空目录，后面所有代码都在这里。我用的是：</p>
+<pre class="highlight"><code class="hljs avrasm"><span class="hljs-symbol">E:</span>\QtTest\Project3\PumpHMI\<br></code></pre>
+
+<p>最终的文件结构会是这样：</p>
+<pre class="highlight"><code class="hljs stylus">PumpHMI/<br>├── CMakeLists<span class="hljs-selector-class">.txt</span>        ← CMake 工程文件<br>├── <span class="hljs-selector-tag">main</span><span class="hljs-selector-class">.cpp</span>              ← 程序入口（<span class="hljs-number">4</span> 行代码）<br>├── mainwindow<span class="hljs-selector-class">.h</span>          ← 主窗口声明<br>├── mainwindow<span class="hljs-selector-class">.cpp</span>        ← 主窗口实现（几乎全部业务逻辑都在这）<br>└── mock_slave<span class="hljs-selector-class">.py</span>         ← 第 <span class="hljs-number">10</span> 章会写的智能模拟器（可选）<br></code></pre>
+
+<blockquote>
+<p>简单到只有两个类文件 —— 这也是为什么我说 Qt 不是难点。难的是”我想清楚要做什么”。</p>
+</blockquote>
+<p>环境就这些。下一章开始动 CMakeLists。</p>
+<hr>
+<h2 id="第-2-章-·-CMake-项目骨架"><a href="#第-2-章-·-CMake-项目骨架" class="headerlink" title="第 2 章 · CMake 项目骨架"></a>第 2 章 · CMake 项目骨架</h2><p>用 Qt Creator 新建 “Qt Widgets Application”，它会自动生成 <code>CMakeLists.txt</code>、<code>main.cpp</code>、<code>mainwindow.&#123;h,cpp&#125;</code>、<code>mainwindow.ui</code>。</p>
+<p><strong>第一件事：把 <code>mainwindow.ui</code> 删掉</strong>。我们这个项目用纯代码搭界面，不用 Designer，省得 UI 文件和代码不同步互相打架。</p>
+<h3 id="2-1-CMakeLists-txt-关键行解读"><a href="#2-1-CMakeLists-txt-关键行解读" class="headerlink" title="2.1 CMakeLists.txt 关键行解读"></a>2.1 CMakeLists.txt 关键行解读</h3><p>修改 <code>CMakeLists.txt</code>，让它知道我们要用哪些 Qt 模块：</p>
+<pre class="highlight"><code class="hljs cmake"><span class="hljs-keyword">find_package</span>(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets SerialBus Charts Sql)<br><span class="hljs-keyword">find_package</span>(Qt<span class="hljs-variable">$&#123;QT_VERSION_MAJOR&#125;</span> REQUIRED COMPONENTS Widgets SerialBus Charts Sql)<br><br><span class="hljs-keyword">set</span>(PROJECT_SOURCES<br>    main.cpp<br>    mainwindow.cpp<br>    mainwindow.h<br>)<br><br><span class="hljs-keyword">target_link_libraries</span>(PumpHMI PRIVATE<br>    Qt<span class="hljs-variable">$&#123;QT_VERSION_MAJOR&#125;</span>::Widgets<br>    Qt<span class="hljs-variable">$&#123;QT_VERSION_MAJOR&#125;</span>::SerialBus<br>    Qt<span class="hljs-variable">$&#123;QT_VERSION_MAJOR&#125;</span>::Charts<br>    Qt<span class="hljs-variable">$&#123;QT_VERSION_MAJOR&#125;</span>::Sql<br>)<br></code></pre>
+
+<p>四个模块的作用：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Widgets</strong></td>
+<td>主窗口、按钮、Label、Table 等基础控件</td>
+</tr>
+<tr>
+<td><strong>SerialBus</strong></td>
+<td>Modbus TCP&#x2F;RTU 客户端（<code>QModbusTcpClient</code> 在这里）</td>
+</tr>
+<tr>
+<td><strong>Charts</strong></td>
+<td>实时压力曲线图</td>
+</tr>
+<tr>
+<td><strong>Sql</strong></td>
+<td>SQLite 报警日志数据库</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-main-cpp-没什么好讲的"><a href="#2-2-main-cpp-没什么好讲的" class="headerlink" title="2.2 main.cpp 没什么好讲的"></a>2.2 main.cpp 没什么好讲的</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;mainwindow.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QApplication&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-function">QApplication <span class="hljs-title">a</span><span class="hljs-params">(argc, argv)</span></span>;<br>    MainWindow w;<br>    w.<span class="hljs-built_in">show</span>();<br>    <span class="hljs-keyword">return</span> QApplication::<span class="hljs-built_in">exec</span>();<br>&#125;<br></code></pre>
+
+<p>四行。所有业务逻辑都进了 <code>MainWindow</code> 的构造函数。</p>
+<h3 id="2-3-先跑一下空窗口"><a href="#2-3-先跑一下空窗口" class="headerlink" title="2.3 先跑一下空窗口"></a>2.3 先跑一下空窗口</h3><p>构造函数和析构函数留空，按 <code>Ctrl+B</code> 编译，再 <code>Ctrl+R</code> 运行。能弹出一个空白窗口就说明环境没问题，可以进下一章了。</p>
+<hr>
+<h2 id="第-3-章-·-主界面布局"><a href="#第-3-章-·-主界面布局" class="headerlink" title="第 3 章 · 主界面布局"></a>第 3 章 · 主界面布局</h2><h3 id="3-1-头文件先列出全部成员"><a href="#3-1-头文件先列出全部成员" class="headerlink" title="3.1 头文件先列出全部成员"></a>3.1 头文件先列出全部成员</h3><p><code>mainwindow.h</code> 一次性把要用的所有控件、Modbus 客户端、图表对象、数据库都声明出来。这样写代码时不用反复回来加成员：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> MAINWINDOW_H</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MAINWINDOW_H</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QMainWindow&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QModbusTcpClient&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QModbusDataUnit&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QTimer&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QtCharts&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QSqlDatabase&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QLabel&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QPushButton&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QTableWidget&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;QVBoxLayout&gt;</span></span><br><br><span class="hljs-comment">// Qt5 下 QtCharts 类位于 QtCharts 命名空间；Qt6 下该宏为空</span><br>QT_CHARTS_USE_NAMESPACE<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MainWindow</span> : <span class="hljs-keyword">public</span> QMainWindow<br>&#123;<br>    Q_OBJECT<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">MainWindow</span><span class="hljs-params">(QWidget *parent = <span class="hljs-literal">nullptr</span>)</span></span>;<br>    ~<span class="hljs-built_in">MainWindow</span>() <span class="hljs-keyword">override</span>;<br><br><span class="hljs-keyword">private</span> slots:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">connectModbus</span><span class="hljs-params">()</span></span>;              <span class="hljs-comment">// 连接下位机</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">readPressure</span><span class="hljs-params">()</span></span>;               <span class="hljs-comment">// 定时读取</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">onReadReady</span><span class="hljs-params">()</span></span>;                <span class="hljs-comment">// 读取完成回调</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">triggerAlarm</span><span class="hljs-params">(<span class="hljs-type">float</span> pressure)</span></span>; <span class="hljs-comment">// 触发报警</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">togglePump</span><span class="hljs-params">()</span></span>;                 <span class="hljs-comment">// 启停水泵</span><br><br><span class="hljs-keyword">private</span>:<br>    QModbusTcpClient *m_modbusClient = <span class="hljs-literal">nullptr</span>;<br>    QTimer *m_pollTimer = <span class="hljs-literal">nullptr</span>;<br><br>    QChart *m_chart = <span class="hljs-literal">nullptr</span>;<br>    QLineSeries *m_series = <span class="hljs-literal">nullptr</span>;<br>    QDateTimeAxis *m_axisX = <span class="hljs-literal">nullptr</span>;<br>    QValueAxis *m_axisY = <span class="hljs-literal">nullptr</span>;<br><br>    QSqlDatabase m_db;<br><br>    QLabel *m_pressureLabel = <span class="hljs-literal">nullptr</span>;<br>    QLabel *m_temperatureLabel = <span class="hljs-literal">nullptr</span>;<br>    QLabel *m_statusLight = <span class="hljs-literal">nullptr</span>;<br>    QPushButton *m_pumpButton = <span class="hljs-literal">nullptr</span>;<br>    QTableWidget *m_logTable = <span class="hljs-literal">nullptr</span>;<br>    QVBoxLayout *centralLayout = <span class="hljs-literal">nullptr</span>;<br><br>    <span class="hljs-type">float</span> m_alarmThreshold = <span class="hljs-number">1.50f</span>;<br>    <span class="hljs-type">bool</span> m_pumpRunning = <span class="hljs-literal">false</span>;<br>    <span class="hljs-type">bool</span> m_alarmActive = <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setupUI</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setupChart</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setupDatabase</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateChart</span><span class="hljs-params">(<span class="hljs-type">float</span> pressure)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">applyNormalStyle</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">resetDisplay</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">logAlarm</span><span class="hljs-params">(<span class="hljs-type">float</span> pressure, <span class="hljs-type">const</span> QString &amp;message)</span></span>;<br>&#125;;<br><span class="hljs-meta">#<span class="hljs-keyword">endif</span></span><br></code></pre>
+
+<h4 id="🟡-坑点-1：QtCharts-在-Qt5-x2F-Qt6-的命名空间差异"><a href="#🟡-坑点-1：QtCharts-在-Qt5-x2F-Qt6-的命名空间差异" class="headerlink" title="🟡 坑点 1：QtCharts 在 Qt5 &#x2F; Qt6 的命名空间差异"></a>🟡 坑点 1：QtCharts 在 Qt5 &#x2F; Qt6 的命名空间差异</h4><p>Qt5 里 <code>QChart</code>、<code>QLineSeries</code> 等类都在 <code>QtCharts</code> 命名空间下，不写 <code>using namespace QtCharts</code> 头文件直接编译报”不存在的类型”。Qt6 把它移到了全局命名空间。</p>
+<p>Qt 官方给了一个宏 <code>QT_CHARTS_USE_NAMESPACE</code> —— <strong>Qt5 下展开为 <code>using namespace QtCharts;</code>，Qt6 下展开为空</strong>。加上这一行，两边都能编。</p>
+<h3 id="3-2-构造函数串联初始化"><a href="#3-2-构造函数串联初始化" class="headerlink" title="3.2 构造函数串联初始化"></a>3.2 构造函数串联初始化</h3><pre class="highlight"><code class="hljs cpp">MainWindow::<span class="hljs-built_in">MainWindow</span>(QWidget *parent)<br>    : <span class="hljs-built_in">QMainWindow</span>(parent)<br>&#123;<br>    <span class="hljs-built_in">setupUI</span>();          <span class="hljs-comment">// 必须先于 setupChart：图表会挂到 centralLayout 上</span><br>    <span class="hljs-built_in">setupChart</span>();<br>    <span class="hljs-built_in">setupDatabase</span>();<br>    <span class="hljs-built_in">connectModbus</span>();<br>&#125;<br></code></pre>
+
+<p><strong>顺序很重要</strong>：<code>setupChart()</code> 用到 <code>centralLayout</code>，必须等 <code>setupUI()</code> 把它 new 出来才能用。</p>
+<h3 id="3-3-setupUI：纯代码搭出主界面"><a href="#3-3-setupUI：纯代码搭出主界面" class="headerlink" title="3.3 setupUI：纯代码搭出主界面"></a>3.3 setupUI：纯代码搭出主界面</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::setupUI</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">auto</span> *central = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QWidget</span>(<span class="hljs-keyword">this</span>);<br>    <span class="hljs-built_in">setCentralWidget</span>(central);<br>    centralLayout = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QVBoxLayout</span>(central);<br><br>    <span class="hljs-comment">// 顶部状态行：指示灯 + 压力 + 温度 + 启停按钮</span><br>    <span class="hljs-keyword">auto</span> *topRow = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QHBoxLayout</span>();<br><br>    m_statusLight = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QLabel</span>();<br>    m_statusLight-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;background-color: #9E9E9E; border-radius: 12px;&quot;</span><br>        <span class="hljs-string">&quot;min-width: 24px; min-height: 24px;&quot;</span>);<br><br>    m_pressureLabel = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QLabel</span>(<span class="hljs-string">&quot;-- MPa&quot;</span>);<br>    m_pressureLabel-&gt;<span class="hljs-built_in">setAlignment</span>(Qt::AlignCenter);<br>    m_pressureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: #2196F3; font-size: 32px; padding: 10px;&quot;</span>);<br><br>    m_temperatureLabel = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QLabel</span>(<span class="hljs-string">&quot;-- °C&quot;</span>);<br>    m_temperatureLabel-&gt;<span class="hljs-built_in">setAlignment</span>(Qt::AlignCenter);<br>    m_temperatureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: #FF9800; font-size: 20px; padding: 10px;&quot;</span>);<br><br>    m_pumpButton = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QPushButton</span>(<span class="hljs-string">&quot;启动水泵&quot;</span>);<br>    m_pumpButton-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;background-color: #4CAF50; color: white; padding: 12px;&quot;</span>);<br>    <span class="hljs-built_in">connect</span>(m_pumpButton, &amp;QPushButton::clicked,<br>            <span class="hljs-keyword">this</span>, &amp;MainWindow::togglePump);<br><br>    topRow-&gt;<span class="hljs-built_in">addWidget</span>(m_statusLight);<br>    topRow-&gt;<span class="hljs-built_in">addWidget</span>(m_pressureLabel, <span class="hljs-number">2</span>);<br>    topRow-&gt;<span class="hljs-built_in">addWidget</span>(m_temperatureLabel, <span class="hljs-number">1</span>);<br>    topRow-&gt;<span class="hljs-built_in">addWidget</span>(m_pumpButton);<br>    centralLayout-&gt;<span class="hljs-built_in">addLayout</span>(topRow);<br><br>    <span class="hljs-comment">// 日志表格</span><br>    m_logTable = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QTableWidget</span>(<span class="hljs-number">0</span>, <span class="hljs-number">3</span>);<br>    m_logTable-&gt;<span class="hljs-built_in">setHorizontalHeaderLabels</span>(&#123;<span class="hljs-string">&quot;时间&quot;</span>, <span class="hljs-string">&quot;压力 (MPa)&quot;</span>, <span class="hljs-string">&quot;信息&quot;</span>&#125;);<br>    m_logTable-&gt;<span class="hljs-built_in">horizontalHeader</span>()-&gt;<span class="hljs-built_in">setStretchLastSection</span>(<span class="hljs-literal">true</span>);<br>    m_logTable-&gt;<span class="hljs-built_in">setEditTriggers</span>(QAbstractItemView::NoEditTriggers);<br>    centralLayout-&gt;<span class="hljs-built_in">addWidget</span>(m_logTable);<br><br>    <span class="hljs-built_in">setWindowTitle</span>(<span class="hljs-string">&quot;水泵监控 HMI&quot;</span>);<br>    <span class="hljs-built_in">resize</span>(<span class="hljs-number">900</span>, <span class="hljs-number">600</span>);<br>&#125;<br></code></pre>
+
+<h3 id="3-4-配色取舍"><a href="#3-4-配色取舍" class="headerlink" title="3.4 配色取舍"></a>3.4 配色取舍</h3><p>我用了<strong>材质设计（Material Design）</strong>的几个颜色：</p>
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>颜色</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>压力数字</td>
+<td><code>#2196F3</code> 蓝</td>
+<td>正常数据</td>
+</tr>
+<tr>
+<td>温度数字</td>
+<td><code>#FF9800</code> 橙</td>
+<td>次要数据</td>
+</tr>
+<tr>
+<td>启动按钮</td>
+<td><code>#4CAF50</code> 绿</td>
+<td>安全可用</td>
+</tr>
+<tr>
+<td>报警状态</td>
+<td><code>#F44336</code> 红</td>
+<td>警告</td>
+</tr>
+<tr>
+<td>离线&#x2F;停机</td>
+<td><code>#9E9E9E</code> 灰</td>
+<td>无数据</td>
+</tr>
+</tbody></table>
+<p>工业 HMI 的颜色规范行业里有 ISA-101，但对这种学习项目，Material 这一套足够了：<strong>绿表示在跑、红表示问题、灰表示不可用</strong>，符合大多数人的直觉。</p>
+<hr>
+<h2 id="第-4-章-·-Modbus-TCP-通信"><a href="#第-4-章-·-Modbus-TCP-通信" class="headerlink" title="第 4 章 · Modbus TCP 通信"></a>第 4 章 · Modbus TCP 通信</h2><p>终于到正菜了。</p>
+<h3 id="4-1-寄存器地址约定"><a href="#4-1-寄存器地址约定" class="headerlink" title="4.1 寄存器地址约定"></a>4.1 寄存器地址约定</h3><p>这是上位机和下位机之间的<strong>协议</strong>，必须先定下来：</p>
+<table>
+<thead>
+<tr>
+<th>地址</th>
+<th>含义</th>
+<th>编码方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>压力</td>
+<td>实际值 × 100（写整数避免传浮点）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>温度</td>
+<td>实际值 × 10</td>
+</tr>
+<tr>
+<td>2</td>
+<td>水泵状态</td>
+<td>0 &#x3D; 停止，1 &#x3D; 运行</td>
+</tr>
+</tbody></table>
+<p>为什么不直接传浮点？因为标准 Modbus 寄存器是 <strong>16 位整数</strong>。传浮点需要把 32 位 float 拆成两个寄存器，编解码麻烦。工业上常见做法就是<strong>用整数倍率约定</strong>，简单可靠。</p>
+<h3 id="4-2-连接：QModbusTcpClient-三件套"><a href="#4-2-连接：QModbusTcpClient-三件套" class="headerlink" title="4.2 连接：QModbusTcpClient 三件套"></a>4.2 连接：QModbusTcpClient 三件套</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::connectModbus</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    m_modbusClient = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QModbusTcpClient</span>(<span class="hljs-keyword">this</span>);<br><br>    m_modbusClient-&gt;<span class="hljs-built_in">setConnectionParameter</span>(<br>        QModbusDevice::NetworkPortParameter, <span class="hljs-number">502</span>);<br>    m_modbusClient-&gt;<span class="hljs-built_in">setConnectionParameter</span>(<br>        QModbusDevice::NetworkAddressParameter, <span class="hljs-string">&quot;127.0.0.1&quot;</span>);<br>    m_modbusClient-&gt;<span class="hljs-built_in">setTimeout</span>(<span class="hljs-number">1000</span>);<br>    m_modbusClient-&gt;<span class="hljs-built_in">setNumberOfRetries</span>(<span class="hljs-number">3</span>);<br><br>    <span class="hljs-keyword">if</span> (!m_modbusClient-&gt;<span class="hljs-built_in">connectDevice</span>()) &#123;<br>        <span class="hljs-built_in">statusBar</span>()-&gt;<span class="hljs-built_in">showMessage</span>(<br>            <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;连接下位机失败: %1&quot;</span>).<span class="hljs-built_in">arg</span>(m_modbusClient-&gt;<span class="hljs-built_in">errorString</span>()));<br>        m_pumpButton-&gt;<span class="hljs-built_in">setEnabled</span>(<span class="hljs-literal">false</span>);<br>        m_pumpButton-&gt;<span class="hljs-built_in">setText</span>(<span class="hljs-string">&quot;未连接下位机&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-built_in">statusBar</span>()-&gt;<span class="hljs-built_in">showMessage</span>(<span class="hljs-string">&quot;已连接到下位机 (127.0.0.1:502)&quot;</span>, <span class="hljs-number">3000</span>);<br>    m_pumpButton-&gt;<span class="hljs-built_in">setEnabled</span>(<span class="hljs-literal">true</span>);<br><br>    m_pollTimer = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QTimer</span>(<span class="hljs-keyword">this</span>);<br>    <span class="hljs-built_in">connect</span>(m_pollTimer, &amp;QTimer::timeout, <span class="hljs-keyword">this</span>, &amp;MainWindow::readPressure);<br><br>    <span class="hljs-built_in">resetDisplay</span>();<br>&#125;<br></code></pre>
+
+<h4 id="🟡-坑点-2：永远要给用户可见的失败反馈"><a href="#🟡-坑点-2：永远要给用户可见的失败反馈" class="headerlink" title="🟡 坑点 2：永远要给用户可见的失败反馈"></a>🟡 坑点 2：永远要给用户可见的失败反馈</h4><p>最早我写的版本，连接失败时只 <code>statusBar()-&gt;showMessage(..., 3000)</code> —— 状态栏闪 3 秒后消失。结果调试时 Modbus Slave 没开，启动 HMI 后<strong>啥反应都没有</strong>，按”启动水泵”也没反应（因为 <code>togglePump</code> 第一行守卫语句直接 return）。</p>
+<p>最后是我盯着代码看了五分钟才反应过来 —— 是连接失败了，按钮里的 Modbus 命令根本发不出去。</p>
+<p>后来改成两件事一起做：</p>
+<ol>
+<li>状态栏<strong>常驻</strong>显示失败原因（不加超时参数）</li>
+<li>把按钮<strong>直接禁用</strong>，文字改成”未连接下位机”</li>
+</ol>
+<p>这样一启动就能看出来”哦原来是模拟器没开”。</p>
+<p><strong>写工控软件，宁可弹窗扰民也别静默失败。</strong></p>
+<h3 id="4-3-定时读取与异步回调"><a href="#4-3-定时读取与异步回调" class="headerlink" title="4.3 定时读取与异步回调"></a>4.3 定时读取与异步回调</h3><p>Modbus 客户端的读写都是<strong>异步</strong>的，请求发出去后立刻返回一个 <code>QModbusReply</code>，等数据到了再触发 <code>finished()</code> 信号。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::readPressure</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!m_modbusClient ||<br>        m_modbusClient-&gt;<span class="hljs-built_in">state</span>() != QModbusDevice::ConnectedState)<br>        <span class="hljs-keyword">return</span>;<br><br>    <span class="hljs-function">QModbusDataUnit <span class="hljs-title">readUnit</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        QModbusDataUnit::HoldingRegisters,  <span class="hljs-comment">// 寄存器类型</span></span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-number">0</span>,                                   <span class="hljs-comment">// 起始地址</span></span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-number">3</span>                                    <span class="hljs-comment">// 读取数量</span></span></span><br><span class="hljs-params"><span class="hljs-function">        )</span></span>;<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">auto</span> *reply = m_modbusClient-&gt;<span class="hljs-built_in">sendReadRequest</span>(readUnit, <span class="hljs-number">1</span>)) &#123;<br>        <span class="hljs-keyword">if</span> (!reply-&gt;<span class="hljs-built_in">isFinished</span>()) &#123;<br>            <span class="hljs-built_in">connect</span>(reply, &amp;QModbusReply::finished,<br>                    <span class="hljs-keyword">this</span>, &amp;MainWindow::onReadReady);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">delete</span> reply;  <span class="hljs-comment">// 广播请求或同步错误，直接删</span><br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::onReadReady</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">auto</span> *reply = <span class="hljs-built_in">qobject_cast</span>&lt;QModbusReply *&gt;(<span class="hljs-built_in">sender</span>());<br>    <span class="hljs-keyword">if</span> (!reply) <span class="hljs-keyword">return</span>;<br><br>    <span class="hljs-keyword">if</span> (reply-&gt;<span class="hljs-built_in">error</span>() == QModbusDevice::NoError) &#123;<br>        <span class="hljs-type">const</span> QModbusDataUnit unit = reply-&gt;<span class="hljs-built_in">result</span>();<br><br>        <span class="hljs-type">float</span> pressure = unit.<span class="hljs-built_in">value</span>(<span class="hljs-number">0</span>) / <span class="hljs-number">100.0f</span>;<br>        <span class="hljs-type">float</span> temperature = unit.<span class="hljs-built_in">value</span>(<span class="hljs-number">1</span>) / <span class="hljs-number">10.0f</span>;<br><br>        m_pressureLabel-&gt;<span class="hljs-built_in">setText</span>(<br>            <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;%1 MPa&quot;</span>).<span class="hljs-built_in">arg</span>(pressure, <span class="hljs-number">0</span>, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">2</span>));<br>        m_temperatureLabel-&gt;<span class="hljs-built_in">setText</span>(<br>            <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;%1 °C&quot;</span>).<span class="hljs-built_in">arg</span>(temperature, <span class="hljs-number">0</span>, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">1</span>));<br><br>        <span class="hljs-keyword">if</span> (pressure &gt; m_alarmThreshold) &#123;<br>            <span class="hljs-built_in">triggerAlarm</span>(pressure);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (m_alarmActive) &#123;<br>            m_alarmActive = <span class="hljs-literal">false</span>;<br>            <span class="hljs-built_in">applyNormalStyle</span>();<br>        &#125;<br><br>        <span class="hljs-built_in">updateChart</span>(pressure);<br><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-built_in">statusBar</span>()-&gt;<span class="hljs-built_in">showMessage</span>(<br>            <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;读取失败: %1&quot;</span>).<span class="hljs-built_in">arg</span>(reply-&gt;<span class="hljs-built_in">errorString</span>()), <span class="hljs-number">2000</span>);<br>    &#125;<br><br>    reply-&gt;<span class="hljs-built_in">deleteLater</span>();<br>&#125;<br></code></pre>
+
+<p>几个关键点：</p>
+<ol>
+<li><strong><code>sendReadRequest(readUnit, 1)</code> 第二个参数是 Slave ID</strong>，不是寄存器地址。新手很容易混淆。</li>
+<li><strong><code>reply-&gt;deleteLater()</code> 不能漏</strong>，否则会内存泄漏。</li>
+<li>**回调里要先判断 <code>reply-&gt;error()</code>**，不然 <code>result()</code> 拿到的可能是垃圾数据。</li>
+</ol>
+<p>定时器在第 9 章会改成”按钮控制启停”，这里先不 start。</p>
+<hr>
+<h2 id="第-5-章-·-实时压力曲线"><a href="#第-5-章-·-实时压力曲线" class="headerlink" title="第 5 章 · 实时压力曲线"></a>第 5 章 · 实时压力曲线</h2><h3 id="5-1-QtCharts-基础三件套"><a href="#5-1-QtCharts-基础三件套" class="headerlink" title="5.1 QtCharts 基础三件套"></a>5.1 QtCharts 基础三件套</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::setupChart</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    m_series = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QLineSeries</span>();<br>    m_series-&gt;<span class="hljs-built_in">setName</span>(<span class="hljs-string">&quot;压力 (MPa)&quot;</span>);<br>    m_series-&gt;<span class="hljs-built_in">setPen</span>(<span class="hljs-built_in">QPen</span>(<span class="hljs-built_in">QColor</span>(<span class="hljs-string">&quot;#2196F3&quot;</span>), <span class="hljs-number">2</span>));<br><br>    m_chart = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QChart</span>();<br>    m_chart-&gt;<span class="hljs-built_in">addSeries</span>(m_series);<br>    m_chart-&gt;<span class="hljs-built_in">setTitle</span>(<span class="hljs-string">&quot;实时压力趋势&quot;</span>);<br>    m_chart-&gt;<span class="hljs-built_in">setAnimationOptions</span>(QChart::NoAnimation);  <span class="hljs-comment">// 实时数据不要动画</span><br><br>    m_axisX = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QDateTimeAxis</span>();<br>    m_axisX-&gt;<span class="hljs-built_in">setFormat</span>(<span class="hljs-string">&quot;HH:mm:ss&quot;</span>);<br>    m_axisX-&gt;<span class="hljs-built_in">setTitleText</span>(<span class="hljs-string">&quot;时间&quot;</span>);<br>    m_chart-&gt;<span class="hljs-built_in">addAxis</span>(m_axisX, Qt::AlignBottom);<br>    m_series-&gt;<span class="hljs-built_in">attachAxis</span>(m_axisX);<br><br>    m_axisY = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QValueAxis</span>();<br>    m_axisY-&gt;<span class="hljs-built_in">setRange</span>(<span class="hljs-number">0</span>, <span class="hljs-number">3.0</span>);<br>    m_axisY-&gt;<span class="hljs-built_in">setTitleText</span>(<span class="hljs-string">&quot;压力 (MPa)&quot;</span>);<br>    m_axisY-&gt;<span class="hljs-built_in">setLabelFormat</span>(<span class="hljs-string">&quot;%.1f&quot;</span>);<br>    m_chart-&gt;<span class="hljs-built_in">addAxis</span>(m_axisY, Qt::AlignLeft);<br>    m_series-&gt;<span class="hljs-built_in">attachAxis</span>(m_axisY);<br><br>    QChartView *chartView = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QChartView</span>(m_chart);<br>    chartView-&gt;<span class="hljs-built_in">setRenderHint</span>(QPainter::Antialiasing);<br><br>    centralLayout-&gt;<span class="hljs-built_in">addWidget</span>(chartView, <span class="hljs-number">1</span>);<br>&#125;<br></code></pre>
+
+<p>注意 <strong><code>QChart::NoAnimation</code></strong> —— 默认 QtCharts 给每次数据变化加缓动动画，实时图表里这是灾难：新数据一来就开始 0.5 秒的”平滑过渡”，曲线看起来一直在抖。<strong>实时数据必须关掉动画</strong>。</p>
+<h3 id="5-2-滑动窗口：只显示最近-60-秒"><a href="#5-2-滑动窗口：只显示最近-60-秒" class="headerlink" title="5.2 滑动窗口：只显示最近 60 秒"></a>5.2 滑动窗口：只显示最近 60 秒</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::updateChart</span><span class="hljs-params">(<span class="hljs-type">float</span> pressure)</span></span><br><span class="hljs-function"></span>&#123;<br>    QDateTime now = QDateTime::<span class="hljs-built_in">currentDateTime</span>();<br><br>    m_series-&gt;<span class="hljs-built_in">append</span>(now.<span class="hljs-built_in">toMSecsSinceEpoch</span>(), pressure);<br><br>    QDateTime cutoff = now.<span class="hljs-built_in">addSecs</span>(<span class="hljs-number">-60</span>);<br>    <span class="hljs-keyword">while</span> (m_series-&gt;<span class="hljs-built_in">count</span>() &gt; <span class="hljs-number">0</span> &amp;&amp;<br>           m_series-&gt;<span class="hljs-built_in">at</span>(<span class="hljs-number">0</span>).<span class="hljs-built_in">x</span>() &lt; cutoff.<span class="hljs-built_in">toMSecsSinceEpoch</span>()) &#123;<br>        m_series-&gt;<span class="hljs-built_in">remove</span>(<span class="hljs-number">0</span>);<br>    &#125;<br><br>    m_axisX-&gt;<span class="hljs-built_in">setRange</span>(cutoff, now);<br>&#125;<br></code></pre>
+
+<p>每秒一个点，60 秒最多 60 个点。<strong>为什么要主动删旧点？</strong> —— 如果不删，跑一天就有 86400 个点，内存和绘制都会越来越慢。工业 HMI 里”看最近一分钟趋势”是很合理的需求，更长的历史用另一个对话框 + 数据库分页查看就行。</p>
+<hr>
+<h2 id="第-6-章-·-报警系统"><a href="#第-6-章-·-报警系统" class="headerlink" title="第 6 章 · 报警系统"></a>第 6 章 · 报警系统</h2><h3 id="6-1-报警三件事：弹窗、变红、记日志"><a href="#6-1-报警三件事：弹窗、变红、记日志" class="headerlink" title="6.1 报警三件事：弹窗、变红、记日志"></a>6.1 报警三件事：弹窗、变红、记日志</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::triggerAlarm</span><span class="hljs-params">(<span class="hljs-type">float</span> pressure)</span></span><br><span class="hljs-function"></span>&#123;<br>    m_pressureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: white; background-color: #F44336;&quot;</span><br>        <span class="hljs-string">&quot;font-size: 32px; padding: 10px; border-radius: 8px;&quot;</span>);<br><br>    m_statusLight-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;background-color: #F44336; border-radius: 12px;&quot;</span><br>        <span class="hljs-string">&quot;min-width: 24px; min-height: 24px;&quot;</span>);<br><br>    <span class="hljs-keyword">if</span> (!m_alarmActive) &#123;<br>        m_alarmActive = <span class="hljs-literal">true</span>;<br>        QMessageBox::<span class="hljs-built_in">warning</span>(<span class="hljs-keyword">this</span>, <span class="hljs-string">&quot;压力报警&quot;</span>,<br>            <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;当前压力 %1 MPa 超过阈值 %2 MPa！\n请立即检查水泵运行状态。&quot;</span>)<br>                .<span class="hljs-built_in">arg</span>(pressure, <span class="hljs-number">0</span>, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">2</span>)<br>                .<span class="hljs-built_in">arg</span>(m_alarmThreshold, <span class="hljs-number">0</span>, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">2</span>));<br>    &#125;<br><br>    <span class="hljs-built_in">logAlarm</span>(pressure,<br>        <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;压力超阈值: %1 MPa &gt; %2 MPa&quot;</span>)<br>            .<span class="hljs-built_in">arg</span>(pressure, <span class="hljs-number">0</span>, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">2</span>)<br>            .<span class="hljs-built_in">arg</span>(m_alarmThreshold, <span class="hljs-number">0</span>, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">2</span>));<br>&#125;<br></code></pre>
+
+<h4 id="🟡-坑点-3：用-m-alarmActive-防止反复弹窗"><a href="#🟡-坑点-3：用-m-alarmActive-防止反复弹窗" class="headerlink" title="🟡 坑点 3：用 m_alarmActive 防止反复弹窗"></a>🟡 坑点 3：用 <code>m_alarmActive</code> 防止反复弹窗</h4><p>如果不加这个 flag，<strong>每秒读一次</strong> → 每秒都超阈值 → 每秒弹一个对话框，根本关不完。</p>
+<p><code>m_alarmActive</code> 充当一个<strong>边沿检测</strong>：只在”正常 → 报警”的瞬间弹一次。回落到阈值以下时，在 <code>onReadReady</code> 里清零它，下次再超阈值才会再弹。</p>
+<p>**最初版本我用的是函数内 <code>static bool</code>**，结果发现状态没法外部清理。后来挪成成员变量 <code>m_alarmActive</code>，配合 <code>applyNormalStyle()</code> 在恢复正常时统一处理，逻辑清晰多了。</p>
+<h3 id="6-2-恢复正常的样式联动"><a href="#6-2-恢复正常的样式联动" class="headerlink" title="6.2 恢复正常的样式联动"></a>6.2 恢复正常的样式联动</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::applyNormalStyle</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    m_pressureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: #2196F3; font-size: 32px; padding: 10px;&quot;</span>);<br>    m_temperatureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: #FF9800; font-size: 20px; padding: 10px;&quot;</span>);<br>    m_statusLight-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;background-color: #4CAF50; border-radius: 12px;&quot;</span><br>        <span class="hljs-string">&quot;min-width: 24px; min-height: 24px;&quot;</span>);<br>&#125;<br></code></pre>
+
+<p><code>onReadReady</code> 里这样判断：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">if</span> (pressure &gt; m_alarmThreshold) &#123;<br>    <span class="hljs-built_in">triggerAlarm</span>(pressure);<br>&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (m_alarmActive) &#123;<br>    m_alarmActive = <span class="hljs-literal">false</span>;<br>    <span class="hljs-built_in">applyNormalStyle</span>();<br>&#125;<br></code></pre>
+
+<p>**只在”刚刚还在报警，现在恢复了”**的时刻调用 <code>applyNormalStyle</code>，避免每秒都瞎刷一遍样式表（虽然刷了也不会出错，但浪费）。</p>
+<hr>
+<h2 id="第-7-章-·-报警日志：SQLite-表格"><a href="#第-7-章-·-报警日志：SQLite-表格" class="headerlink" title="第 7 章 · 报警日志：SQLite + 表格"></a>第 7 章 · 报警日志：SQLite + 表格</h2><h3 id="7-1-一次性初始化数据库"><a href="#7-1-一次性初始化数据库" class="headerlink" title="7.1 一次性初始化数据库"></a>7.1 一次性初始化数据库</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::setupDatabase</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    m_db = QSqlDatabase::<span class="hljs-built_in">addDatabase</span>(<span class="hljs-string">&quot;QSQLITE&quot;</span>);<br>    m_db.<span class="hljs-built_in">setDatabaseName</span>(<span class="hljs-string">&quot;pump_alarm_log.db&quot;</span>);<br><br>    <span class="hljs-keyword">if</span> (!m_db.<span class="hljs-built_in">open</span>()) &#123;<br>        <span class="hljs-built_in">qWarning</span>() &lt;&lt; <span class="hljs-string">&quot;无法打开数据库:&quot;</span> &lt;&lt; m_db.<span class="hljs-built_in">lastError</span>().<span class="hljs-built_in">text</span>();<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    QSqlQuery query;<br>    query.<span class="hljs-built_in">exec</span>(<br>        <span class="hljs-string">&quot;CREATE TABLE IF NOT EXISTS alarm_log (&quot;</span><br>        <span class="hljs-string">&quot;  id INTEGER PRIMARY KEY AUTOINCREMENT,&quot;</span><br>        <span class="hljs-string">&quot;  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,&quot;</span><br>        <span class="hljs-string">&quot;  pressure REAL,&quot;</span><br>        <span class="hljs-string">&quot;  message TEXT&quot;</span><br>        <span class="hljs-string">&quot;)&quot;</span><br>    );<br>&#125;<br></code></pre>
+
+<p><code>pump_alarm_log.db</code> 文件默认会出现在<strong>当前工作目录</strong>（在 Qt Creator 里运行时，就是 build 目录里）。想放到固定位置可以用 <code>QStandardPaths::writableLocation</code> 指定。</p>
+<h3 id="7-2-写入一条报警"><a href="#7-2-写入一条报警" class="headerlink" title="7.2 写入一条报警"></a>7.2 写入一条报警</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::logAlarm</span><span class="hljs-params">(<span class="hljs-type">float</span> pressure, <span class="hljs-type">const</span> QString &amp;message)</span></span><br><span class="hljs-function"></span>&#123;<br>    QSqlQuery query;<br>    query.<span class="hljs-built_in">prepare</span>(<br>        <span class="hljs-string">&quot;INSERT INTO alarm_log (pressure, message) VALUES (?, ?)&quot;</span>);<br>    query.<span class="hljs-built_in">addBindValue</span>(pressure);<br>    query.<span class="hljs-built_in">addBindValue</span>(message);<br>    query.<span class="hljs-built_in">exec</span>();<br><br>    <span class="hljs-type">int</span> row = m_logTable-&gt;<span class="hljs-built_in">rowCount</span>();<br>    m_logTable-&gt;<span class="hljs-built_in">insertRow</span>(row);<br>    m_logTable-&gt;<span class="hljs-built_in">setItem</span>(row, <span class="hljs-number">0</span>,<br>        <span class="hljs-keyword">new</span> <span class="hljs-built_in">QTableWidgetItem</span>(<br>            QDateTime::<span class="hljs-built_in">currentDateTime</span>().<span class="hljs-built_in">toString</span>(<span class="hljs-string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>)));<br>    m_logTable-&gt;<span class="hljs-built_in">setItem</span>(row, <span class="hljs-number">1</span>,<br>        <span class="hljs-keyword">new</span> <span class="hljs-built_in">QTableWidgetItem</span>(QString::<span class="hljs-built_in">number</span>(pressure, <span class="hljs-string">&#x27;f&#x27;</span>, <span class="hljs-number">2</span>)));<br>    m_logTable-&gt;<span class="hljs-built_in">setItem</span>(row, <span class="hljs-number">2</span>,<br>        <span class="hljs-keyword">new</span> <span class="hljs-built_in">QTableWidgetItem</span>(message));<br><br>    m_logTable-&gt;<span class="hljs-built_in">scrollToBottom</span>();<br>&#125;<br></code></pre>
+
+<h4 id="🟡-坑点-4：永远用参数化查询"><a href="#🟡-坑点-4：永远用参数化查询" class="headerlink" title="🟡 坑点 4：永远用参数化查询"></a>🟡 坑点 4：永远用参数化查询</h4><p>千万别拼字符串 SQL：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-comment">// ❌ 危险</span><br>query.<span class="hljs-built_in">exec</span>(<span class="hljs-string">&quot;INSERT INTO alarm_log (message) VALUES (&#x27;&quot;</span> + message + <span class="hljs-string">&quot;&#x27;)&quot;</span>);<br></code></pre>
+
+<p>只要 <code>message</code> 里有单引号或者奇怪字符，SQL 就被破坏了。哪怕 message 是程序内部生成的、不接受外部输入，养成 <code>prepare + addBindValue</code> 的习惯也好 —— <strong>省得以后接入用户输入时给自己挖坑</strong>。</p>
+<hr>
+<h2 id="第-8-章-·-水泵控制：写寄存器"><a href="#第-8-章-·-水泵控制：写寄存器" class="headerlink" title="第 8 章 · 水泵控制：写寄存器"></a>第 8 章 · 水泵控制：写寄存器</h2><h3 id="8-1-togglePump：发一条写入请求"><a href="#8-1-togglePump：发一条写入请求" class="headerlink" title="8.1 togglePump：发一条写入请求"></a>8.1 togglePump：发一条写入请求</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::togglePump</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!m_modbusClient ||<br>        m_modbusClient-&gt;<span class="hljs-built_in">state</span>() != QModbusDevice::ConnectedState) &#123;<br>        QMessageBox::<span class="hljs-built_in">warning</span>(<span class="hljs-keyword">this</span>, <span class="hljs-string">&quot;未连接下位机&quot;</span>,<br>            <span class="hljs-string">&quot;Modbus 下位机未连接，无法控制水泵。\n&quot;</span><br>            <span class="hljs-string">&quot;请确认 127.0.0.1:502 上有 Modbus Slave 在运行。&quot;</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-type">bool</span> nextState = !m_pumpRunning;<br><br>    <span class="hljs-function">QModbusDataUnit <span class="hljs-title">writeUnit</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        QModbusDataUnit::HoldingRegisters, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>)</span></span>;<br>    writeUnit.<span class="hljs-built_in">setValue</span>(<span class="hljs-number">0</span>, nextState ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">auto</span> *reply = m_modbusClient-&gt;<span class="hljs-built_in">sendWriteRequest</span>(writeUnit, <span class="hljs-number">1</span>)) &#123;<br>        <span class="hljs-built_in">connect</span>(reply, &amp;QModbusReply::finished, <span class="hljs-keyword">this</span>,<br>            [<span class="hljs-keyword">this</span>, reply, nextState]() &#123;<br>                <span class="hljs-keyword">if</span> (reply-&gt;<span class="hljs-built_in">error</span>() == QModbusDevice::NoError) &#123;<br>                    m_pumpRunning = nextState;<br>                    m_pumpButton-&gt;<span class="hljs-built_in">setText</span>(<br>                        m_pumpRunning ? <span class="hljs-string">&quot;停止水泵&quot;</span> : <span class="hljs-string">&quot;启动水泵&quot;</span>);<br>                    m_pumpButton-&gt;<span class="hljs-built_in">setStyleSheet</span>(m_pumpRunning<br>                        ? <span class="hljs-string">&quot;background-color: #F44336; color: white; padding: 12px;&quot;</span><br>                        : <span class="hljs-string">&quot;background-color: #4CAF50; color: white; padding: 12px;&quot;</span>);<br><br>                    <span class="hljs-keyword">if</span> (m_pumpRunning) &#123;<br>                        <span class="hljs-built_in">applyNormalStyle</span>();<br>                        m_pollTimer-&gt;<span class="hljs-built_in">start</span>(<span class="hljs-number">1000</span>);<br>                        <span class="hljs-built_in">statusBar</span>()-&gt;<span class="hljs-built_in">showMessage</span>(<span class="hljs-string">&quot;水泵已启动，开始监测&quot;</span>, <span class="hljs-number">2000</span>);<br>                    &#125; <span class="hljs-keyword">else</span> &#123;<br>                        m_pollTimer-&gt;<span class="hljs-built_in">stop</span>();<br>                        <span class="hljs-built_in">resetDisplay</span>();<br>                        <span class="hljs-built_in">statusBar</span>()-&gt;<span class="hljs-built_in">showMessage</span>(<span class="hljs-string">&quot;水泵已停止，监测已暂停&quot;</span>, <span class="hljs-number">2000</span>);<br>                    &#125;<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-built_in">statusBar</span>()-&gt;<span class="hljs-built_in">showMessage</span>(<br>                        <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;写入失败: %1&quot;</span>).<span class="hljs-built_in">arg</span>(reply-&gt;<span class="hljs-built_in">errorString</span>()), <span class="hljs-number">2000</span>);<br>                &#125;<br>                reply-&gt;<span class="hljs-built_in">deleteLater</span>();<br>            &#125;);<br>    &#125;<br>&#125;<br></code></pre>
+
+<h4 id="🟡-坑点-5：写入失败时不要修改本地状态"><a href="#🟡-坑点-5：写入失败时不要修改本地状态" class="headerlink" title="🟡 坑点 5：写入失败时不要修改本地状态"></a>🟡 坑点 5：写入失败时不要修改本地状态</h4><p>我最初的写法是<strong>先</strong>把 <code>m_pumpRunning = !m_pumpRunning</code> 翻转，然后发请求。结果遇到网络抖动写入失败时，按钮文字已经改了、本地状态已经翻了，<strong>实际下位机却没动</strong>，HMI 和现场状态分裂。</p>
+<p>改成现在这样：算出 <code>nextState</code>，发请求，**只有写入回调成功时才把 <code>nextState</code> 提交到 <code>m_pumpRunning</code>**。失败就维持原状 + 弹个错误提示。</p>
+<p>这是<strong>事务性思维</strong> —— 写入操作要么整体成功要么整体回退，避免半成功的中间状态。</p>
+<hr>
+<h2 id="第-9-章-·-按需采集：停泵就清零"><a href="#第-9-章-·-按需采集：停泵就清零" class="headerlink" title="第 9 章 · 按需采集：停泵就清零"></a>第 9 章 · 按需采集：停泵就清零</h2><h3 id="9-1-一个反直觉的设计决策"><a href="#9-1-一个反直觉的设计决策" class="headerlink" title="9.1 一个反直觉的设计决策"></a>9.1 一个反直觉的设计决策</h3><p>最初我的写法：连上 Modbus 就立刻 <code>m_pollTimer-&gt;start(1000)</code>，每秒轮询。<strong>不管泵开没开</strong>。</p>
+<p>后来想了一下，对 demo &#x2F; 学习场景，这样有个不太友好的现象：泵停了，但屏幕上数字还在跳、图表还在画线，因为模拟器里压力值是手动设的，不会因为”泵停了”就自动归零。<strong>视觉上分裂</strong>。</p>
+<p>所以最后决定：<strong>让”启停水泵”按钮同时充当”启停监测”的开关</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>显示</th>
+<th>数据采集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>未启动 &#x2F; 停机</td>
+<td>全部 0、灰色</td>
+<td>不读</td>
+</tr>
+<tr>
+<td>运行中</td>
+<td>实时数字 + 曲线，正常颜色</td>
+<td>每秒读一次</td>
+</tr>
+</tbody></table>
+<h3 id="9-2-resetDisplay：界面归零"><a href="#9-2-resetDisplay：界面归零" class="headerlink" title="9.2 resetDisplay：界面归零"></a>9.2 resetDisplay：界面归零</h3><pre class="highlight"><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">MainWindow::resetDisplay</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    m_pressureLabel-&gt;<span class="hljs-built_in">setText</span>(<span class="hljs-string">&quot;0.00 MPa&quot;</span>);<br>    m_pressureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: #9E9E9E; font-size: 32px; padding: 10px;&quot;</span>);<br><br>    m_temperatureLabel-&gt;<span class="hljs-built_in">setText</span>(<span class="hljs-string">&quot;0.0 °C&quot;</span>);<br>    m_temperatureLabel-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;color: #9E9E9E; font-size: 20px; padding: 10px;&quot;</span>);<br><br>    m_statusLight-&gt;<span class="hljs-built_in">setStyleSheet</span>(<br>        <span class="hljs-string">&quot;background-color: #9E9E9E; border-radius: 12px;&quot;</span><br>        <span class="hljs-string">&quot;min-width: 24px; min-height: 24px;&quot;</span>);<br><br>    <span class="hljs-keyword">if</span> (m_series) &#123;<br>        m_series-&gt;<span class="hljs-built_in">clear</span>();<br>    &#125;<br>    m_alarmActive = <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre>
+
+<p>在 <code>connectModbus()</code> 末尾、<code>togglePump</code> 的”停止”分支都调用它。</p>
+<h3 id="9-3-设计哲学：HMI-该不该一直监测？"><a href="#9-3-设计哲学：HMI-该不该一直监测？" class="headerlink" title="9.3 设计哲学：HMI 该不该一直监测？"></a>9.3 设计哲学：HMI 该不该一直监测？</h3><p>我先把答案讲清楚：<strong>真实工业 HMI 应该一直监测</strong>，因为：</p>
+<ul>
+<li>设备本地可能被人手动操作，HMI 不读就不知道</li>
+<li>出故障的瞬间最值得记录</li>
+<li>HMI &#x3D; 操作员的”眼睛”，眼睛不能闭</li>
+</ul>
+<p>这个项目<strong>故意违反了这个原则</strong>，是为了演示更直观的视觉效果 —— 停泵后界面”安静下来”，看起来更符合用户直觉。</p>
+<p><strong>做真实产品时，建议保留持续轮询，停泵后只是把数据显示成灰色或弱化样式，不要真停止采集。</strong></p>
+<hr>
+<h2 id="第-10-章-·-进阶：智能-Mock-让压力联动"><a href="#第-10-章-·-进阶：智能-Mock-让压力联动" class="headerlink" title="第 10 章 · 进阶：智能 Mock 让压力联动"></a>第 10 章 · 进阶：智能 Mock 让压力联动</h2><h3 id="10-1-模拟器是”白板”，不是”设备”"><a href="#10-1-模拟器是”白板”，不是”设备”" class="headerlink" title="10.1 模拟器是”白板”，不是”设备”"></a>10.1 模拟器是”白板”，不是”设备”</h3><p>Modbus Slave 模拟器只是一块<strong>白板</strong>：寄存器 0 是 100、寄存器 2 是 0，三个数字之间<strong>没有任何关系</strong>。你点”停止水泵”，程序把寄存器 2 改成 0，但<strong>寄存器 0 的压力还是 100</strong>，因为模拟器不会做”泵停了所以压力降”的物理推演。</p>
+<p>要看到漂亮的<strong>泄压曲线</strong>（停泵后压力指数衰减到 0），需要一个<strong>会思考的模拟器</strong>。30 行 Python 就够。</p>
+<h3 id="10-2-pymodbus-智能模拟脚本"><a href="#10-2-pymodbus-智能模拟脚本" class="headerlink" title="10.2 pymodbus 智能模拟脚本"></a>10.2 pymodbus 智能模拟脚本</h3><pre class="highlight"><code class="hljs python"><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">PumpHMI 智能 Modbus Slave 模拟器</span><br><span class="hljs-string">  寄存器 0: 压力 × 100</span><br><span class="hljs-string">  寄存器 1: 温度 × 10</span><br><span class="hljs-string">  寄存器 2: 水泵状态 (0/1)</span><br><span class="hljs-string"></span><br><span class="hljs-string">物理逻辑：</span><br><span class="hljs-string">  * 泵启动后：压力指数逼近 ~1.30 MPa，带 ±0.03 抖动</span><br><span class="hljs-string">  * 泵停止后：压力指数衰减 → 0（泄压曲线）</span><br><span class="hljs-string">  * 温度跟随泵状态：运行 → 35°C，停止 → 25°C</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br><span class="hljs-keyword">import</span> random, threading, time<br><span class="hljs-keyword">from</span> pymodbus.datastore <span class="hljs-keyword">import</span> (<br>    ModbusSequentialDataBlock, ModbusServerContext, ModbusSlaveContext)<br><span class="hljs-keyword">from</span> pymodbus.server <span class="hljs-keyword">import</span> StartTcpServer<br><br>TARGET_PRESSURE = <span class="hljs-number">130</span>   <span class="hljs-comment"># 1.30 MPa</span><br>RISE_RATE       = <span class="hljs-number">0.20</span><br>DECAY_RATE      = <span class="hljs-number">0.85</span><br>PRESSURE_JITTER = <span class="hljs-number">3</span><br>TEMP_RUN        = <span class="hljs-number">350</span><br>TEMP_IDLE       = <span class="hljs-number">250</span><br>TEMP_RATE       = <span class="hljs-number">0.05</span><br>FC_HOLDING      = <span class="hljs-number">3</span><br><br>store = ModbusSlaveContext(<br>    hr=ModbusSequentialDataBlock(<span class="hljs-number">0</span>, [<span class="hljs-number">0</span>, TEMP_IDLE, <span class="hljs-number">0</span>]))<br>context = ModbusServerContext(slaves=&#123;<span class="hljs-number">1</span>: store&#125;, single=<span class="hljs-literal">False</span>)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">simulate</span>():<br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        time.sleep(<span class="hljs-number">1</span>)<br>        pressure = store.getValues(FC_HOLDING, <span class="hljs-number">0</span>, count=<span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]<br>        temperature = store.getValues(FC_HOLDING, <span class="hljs-number">1</span>, count=<span class="hljs-number">1</span>)[<span class="hljs-number">0</span>]<br>        pump_on = store.getValues(FC_HOLDING, <span class="hljs-number">2</span>, count=<span class="hljs-number">1</span>)[<span class="hljs-number">0</span>] != <span class="hljs-number">0</span><br><br>        <span class="hljs-keyword">if</span> pump_on:<br>            new_p = pressure + (TARGET_PRESSURE - pressure) * RISE_RATE<br>            new_p += random.uniform(-PRESSURE_JITTER, PRESSURE_JITTER)<br>            new_p = <span class="hljs-built_in">max</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">int</span>(new_p))<br>            new_t = <span class="hljs-built_in">int</span>(temperature + (TEMP_RUN - temperature) * TEMP_RATE)<br>        <span class="hljs-keyword">else</span>:<br>            new_p = <span class="hljs-built_in">int</span>(pressure * DECAY_RATE)<br>            new_t = <span class="hljs-built_in">int</span>(temperature + (TEMP_IDLE - temperature) * TEMP_RATE)<br><br>        store.setValues(FC_HOLDING, <span class="hljs-number">0</span>, [new_p])<br>        store.setValues(FC_HOLDING, <span class="hljs-number">1</span>, [new_t])<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    threading.Thread(target=simulate, daemon=<span class="hljs-literal">True</span>).start()<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;&gt;&gt;&gt; Mock Modbus Slave on 127.0.0.1:502 (Unit ID = 1)&quot;</span>)<br>    StartTcpServer(context=context, address=(<span class="hljs-string">&quot;127.0.0.1&quot;</span>, <span class="hljs-number">502</span>))<br></code></pre>
+
+<p>使用方法：</p>
+<ol>
+<li>关闭 Witte Modbus Slave（502 端口要让出来）</li>
+<li><code>pip install pymodbus</code></li>
+<li><strong>以管理员身份</strong>运行：<code>python mock_slave.py</code></li>
+<li>启动 PumpHMI，点”启动水泵”</li>
+</ol>
+<p>效果：压力会<strong>几秒内升到 1.30 MPa 左右并轻微抖动</strong>，停泵后<strong>画出一条平滑的指数衰减曲线</strong>。</p>
+<h3 id="10-3-测试报警"><a href="#10-3-测试报警" class="headerlink" title="10.3 测试报警"></a>10.3 测试报警</h3><p>把 <code>TARGET_PRESSURE</code> 改成 <code>160</code>，泵启动后压力会冲过 1.50 MPa，触发弹窗 + 数据库写入 + 表格新增一行 —— <strong>一次性把整个报警链路都测了</strong>。</p>
+<hr>
+<h2 id="第-11-章-·-部署：脱离-Qt-安装独立运行"><a href="#第-11-章-·-部署：脱离-Qt-安装独立运行" class="headerlink" title="第 11 章 · 部署：脱离 Qt 安装独立运行"></a>第 11 章 · 部署：脱离 Qt 安装独立运行</h2><p>写完之后，想把 exe 拷到没装 Qt 的电脑上跑？双击会报”缺少 Qt6Core.dll” —— Qt 的 DLL 没拷过去。</p>
+<p><strong>解决方法：用 <code>windeployqt</code> 一键扫描依赖</strong>。</p>
+<h3 id="11-1-先切到-Release-构建"><a href="#11-1-先切到-Release-构建" class="headerlink" title="11.1 先切到 Release 构建"></a>11.1 先切到 Release 构建</h3><p>Qt Creator 左下角点 Kit 选择器 → Build 那栏选 <strong>Release</strong> → <code>Ctrl+B</code>。</p>
+<p>输出目录大概是：</p>
+<pre class="highlight"><code class="hljs mathematica"><span class="hljs-built_in">E</span><span class="hljs-operator">:</span>\<span class="hljs-variable">QtTest</span>\<span class="hljs-variable">Project3</span>\<span class="hljs-variable">PumpHMI</span>\<span class="hljs-variable">build</span>\<span class="hljs-type">Desktop_Qt</span><span class="hljs-type">_</span><span class="hljs-number">6</span><span class="hljs-type">_</span><span class="hljs-number">11</span><span class="hljs-type">_</span><span class="hljs-number">1</span><span class="hljs-type">_MinGW</span><span class="hljs-type">_</span><span class="hljs-number">64</span><span class="hljs-type">_bit</span><span class="hljs-operator">-</span><span class="hljs-built_in">Release</span>\<br></code></pre>
+
+<p>里面有 <code>PumpHMI.exe</code>。直接双击会闪退（缺 dll）。</p>
+<h3 id="11-2-跑-windeployqt"><a href="#11-2-跑-windeployqt" class="headerlink" title="11.2 跑 windeployqt"></a>11.2 跑 windeployqt</h3><p>打开普通 cmd（<code>Win+R</code> → <code>cmd</code>），两行命令：</p>
+<pre class="highlight"><code class="hljs bat"><span class="hljs-built_in">cd</span> /d E:\QtTest\Project3\PumpHMI\build\Desktop_Qt_6_11_1_MinGW_64_bit-Release<br>&quot;D:\App\Qt6.<span class="hljs-number">11</span>\<span class="hljs-number">6</span>.<span class="hljs-number">11</span>.<span class="hljs-number">1</span>\mingw_64\bin\windeployqt.exe&quot; PumpHMI.exe<br></code></pre>
+
+<blockquote>
+<p>把 <code>D:\App\Qt6.11\6.11.1</code> 换成你自己的 Qt 安装路径。</p>
+</blockquote>
+<p>它会自动扫描 exe 的依赖，拷过来：</p>
+<ul>
+<li>Qt 模块 DLL：<code>Qt6Core.dll</code>、<code>Qt6Widgets.dll</code>、<code>Qt6Charts.dll</code>、<code>Qt6SerialBus.dll</code>、<code>Qt6Sql.dll</code> …</li>
+<li>MinGW 运行时：<code>libgcc_s_seh-1.dll</code>、<code>libstdc++-6.dll</code>、<code>libwinpthread-1.dll</code></li>
+<li>平台插件：<code>platforms\qwindows.dll</code>（缺这个 Qt 程序在 Windows 上直接闪退）</li>
+<li>SQL 驱动：<code>sqldrivers\qsqlite.dll</code></li>
+<li>TLS &#x2F; 图像格式 &#x2F; 翻译文件等</li>
+</ul>
+<p>跑完之后，Release 目录就<strong>可以独立运行</strong>了，双击 exe 试一下。</p>
+<h4 id="🟡-坑点-6：MSYS2-和-Qt-官方的-windeployqt-不能混用"><a href="#🟡-坑点-6：MSYS2-和-Qt-官方的-windeployqt-不能混用" class="headerlink" title="🟡 坑点 6：MSYS2 和 Qt 官方的 windeployqt 不能混用"></a>🟡 坑点 6：MSYS2 和 Qt 官方的 windeployqt 不能混用</h4><p>如果你电脑上还装了 MSYS2，<code>where windeployqt</code> 可能会找到：</p>
+<pre class="highlight"><code class="hljs moonscript"><span class="hljs-name">C</span>:\msys64\mingw64\bin\windeployqt.exe   ← MSYS2 自己的<br></code></pre>
+
+<p>这个<strong>不能用</strong>！MSYS2 装的 Qt 版本和你 Qt 官方安装包的版本基本对不上，部署后会出现 “DLL 入口点找不到” 之类的诡异错误。</p>
+<p><strong>始终用全路径调用 Qt 官方的那个</strong>：</p>
+<pre class="highlight"><code class="hljs bat">&quot;D:\App\Qt6.<span class="hljs-number">11</span>\<span class="hljs-number">6</span>.<span class="hljs-number">11</span>.<span class="hljs-number">1</span>\mingw_64\bin\windeployqt.exe&quot; PumpHMI.exe<br></code></pre>
+
+<h3 id="11-3-哪些文件可以删"><a href="#11-3-哪些文件可以删" class="headerlink" title="11.3 哪些文件可以删"></a>11.3 哪些文件可以删</h3><p>部署完后 Release 目录里有些是<strong>构建副产物</strong>，发给别人时可以删：</p>
+<table>
+<thead>
+<tr>
+<th>可以删</th>
+<th>必须留</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CMakeFiles/</code>、<code>PumpHMI_autogen/</code>、<code>Testing/</code></td>
+<td><code>PumpHMI.exe</code></td>
+</tr>
+<tr>
+<td><code>CMakeCache.txt</code>、<code>Makefile</code>、<code>cmake_install.cmake</code></td>
+<td>所有 <code>.dll</code></td>
+</tr>
+<tr>
+<td><code>qtcsettings.cmake</code>、<code>PumpHMI.exe.manifest</code></td>
+<td>所有子目录（<code>platforms</code>、<code>sqldrivers</code> 等）</td>
+</tr>
+<tr>
+<td><code>pump_alarm_log.db</code>（首次运行会自动重建）</td>
+<td><code>translations/</code>（如果想支持多语言）</td>
+</tr>
+</tbody></table>
+<p>清理完之后，目录大小通常在 <strong>50~80 MB</strong> —— 这就是一个完整 Qt 程序的”最小可分发包”了。</p>
+<hr>
+<h2 id="第-12-章-·-那些我以为是-bug-的瞬间"><a href="#第-12-章-·-那些我以为是-bug-的瞬间" class="headerlink" title="第 12 章 · 那些我以为是 bug 的瞬间"></a>第 12 章 · 那些我以为是 bug 的瞬间</h2><p>写代码的过程里，<strong>真正的难题不是 Qt 的 API</strong>，而是一连串”我以为程序坏了，结果是我没想清楚”的瞬间。这一章把我开发过程中真实问过的问题原样列出来 —— 因为我相信，<strong>你也会问同样的问题</strong>。</p>
+<h3 id="💬-“为什么启动没有反应”"><a href="#💬-“为什么启动没有反应”" class="headerlink" title="💬 “为什么启动没有反应”"></a>💬 “为什么启动没有反应”</h3><p>我点了”启动水泵”按钮 —— <strong>没反应</strong>。</p>
+<p>第一反应：按钮坏了？信号槽没连上？</p>
+<p>排查后才发现：点击信号确实到了 <code>togglePump()</code>，但<strong>函数第一行</strong>：</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-keyword">if</span> (!m_modbusClient ||<br>    m_modbusClient-&gt;<span class="hljs-built_in">state</span>() != QModbusDevice::ConnectedState)<br>    <span class="hljs-keyword">return</span>;<br></code></pre>
+
+<p>直接 return 了。原因是 <strong>Modbus 模拟器根本没启动</strong>，502 端口没人监听，<code>connectDevice()</code> 在程序启动时就失败了。状态栏闪过一行”连接下位机失败”3 秒后消失，我根本没注意到。</p>
+<p><strong>教训</strong>：失败要让用户<strong>看得见、关不掉</strong>。后来我把失败提示改成状态栏常驻 + 按钮直接禁用 + 文字改”未连接下位机”，三重提示才算合格。</p>
+<h3 id="💬-“为什么只显示压力，其他数据没有，是不用显示吗”"><a href="#💬-“为什么只显示压力，其他数据没有，是不用显示吗”" class="headerlink" title="💬 “为什么只显示压力，其他数据没有，是不用显示吗”"></a>💬 “为什么只显示压力，其他数据没有，是不用显示吗”</h3><p>我看到代码里明明读了三个寄存器，但界面<strong>只有压力数字</strong>。</p>
+<pre class="highlight"><code class="hljs cpp"><span class="hljs-type">float</span> pressure = unit.<span class="hljs-built_in">value</span>(<span class="hljs-number">0</span>) / <span class="hljs-number">100.0f</span>;    <span class="hljs-comment">// ✓ 显示了</span><br><span class="hljs-type">float</span> temperature = unit.<span class="hljs-built_in">value</span>(<span class="hljs-number">1</span>) / <span class="hljs-number">10.0f</span>;  <span class="hljs-comment">// 读了</span><br><span class="hljs-built_in">Q_UNUSED</span>(temperature);                       <span class="hljs-comment">// ← 直接扔掉</span><br><span class="hljs-type">int</span> pumpStatus = unit.<span class="hljs-built_in">value</span>(<span class="hljs-number">2</span>);              <span class="hljs-comment">// 只用于同步按钮</span><br></code></pre>
+
+<p><strong>读了数据 ≠ 显示了数据</strong>。如果对应的 UI 控件没创建，数据就成了内存里的孤儿。后来加了一个 <code>m_temperatureLabel</code>，在顶部行插进去，温度才出现在界面上。</p>
+<p><strong>教训</strong>：读、用、显示是<strong>三件独立的事</strong>。看到 <code>Q_UNUSED</code> 就要警觉 —— 这个变量是不是应该被用上？</p>
+<h3 id="💬-“Modbus-Slave-里面那个-2-的值是-0-还是-1-有什么区别”"><a href="#💬-“Modbus-Slave-里面那个-2-的值是-0-还是-1-有什么区别”" class="headerlink" title="💬 “Modbus Slave 里面那个 2 的值是 0 还是 1 有什么区别”"></a>💬 “Modbus Slave 里面那个 2 的值是 0 还是 1 有什么区别”</h3><p>这个问题问出来我才意识到：<strong>Modbus 寄存器值的含义完全是协议层的约定</strong>，不是 Modbus 本身规定的。</p>
+<p>在我们这个项目里：</p>
+<ul>
+<li>寄存器 2 &#x3D; 0 → 水泵停止</li>
+<li>寄存器 2 &#x3D; 1 → 水泵运行</li>
+</ul>
+<p>但这个约定<strong>只存在于 PumpHMI 的代码里</strong>。模拟器不知道 0 和 1 的含义，它只是个存数字的盒子。换一个项目，寄存器 2 完全可以表示别的东西。</p>
+<p><strong>教训</strong>：Modbus 是<strong>搬数字的</strong>，不是<strong>懂数字的</strong>。语义必须靠上位机和下位机约定，写在文档里。</p>
+<h3 id="💬-“为什么变成零了之后，还是会检测到压力”"><a href="#💬-“为什么变成零了之后，还是会检测到压力”" class="headerlink" title="💬 “为什么变成零了之后，还是会检测到压力”"></a>💬 “为什么变成零了之后，还是会检测到压力”</h3><p>这是我整个开发过程里<strong>最久才想通</strong>的一个问题。</p>
+<p>我点了”停止水泵”，模拟器里寄存器 2 变成了 0。<strong>但寄存器 0（压力）的值还在那里</strong>，所以图表继续画线。我的直觉是”泵停了，压力应该归零啊？”</p>
+<p>真相是：<strong>Modbus Slave 模拟器只是一块白板</strong>。三个寄存器只是三个独立的格子，<strong>它们之间没有任何关系</strong>。模拟器不知道”水泵”是什么，更不会模拟”泵停了所以压力降”的物理过程。</p>
+<p>PumpHMI 也只负责<strong>抄写</strong>：白板上写什么我就显示什么。</p>
+<p>真实世界里，”泵停 → 压力降”这个<strong>物理过程</strong>是由真实设备完成的：水泵停转 → 管道压力自然下降 → 压力传感器读到新值 → PLC 把新值写回寄存器 0 → HMI 才能读到新的压力。模拟器没有水泵、没有管道，所以这个过程不会发生。</p>
+<p><strong>教训</strong>：调试工具是工具，<strong>别把工具当成真实设备</strong>。要看到真实联动效果，得自己写一个会”思考”的模拟器（见第 10 章的 pymodbus 智能 mock）。</p>
+<h3 id="💬-“为什么停止水泵之后还在检测压力”"><a href="#💬-“为什么停止水泵之后还在检测压力”" class="headerlink" title="💬 “为什么停止水泵之后还在检测压力”"></a>💬 “为什么停止水泵之后还在检测压力”</h3><p>这是上一个问题的延伸。直觉是”停泵就该停止读数据吧”，但我最初的设计是<strong>只要连上就一直轮询</strong>。</p>
+<p>后来想明白了：真实工业 HMI <strong>就应该一直读</strong>，因为：</p>
+<ul>
+<li>设备本地可能被人手动操作，HMI 不读就不知道</li>
+<li>出故障的瞬间最值得记录</li>
+<li>HMI &#x3D; 操作员的”眼睛”，眼睛不能闭</li>
+</ul>
+<p>但对 demo 场景，”停泵后界面安静下来”视觉上更直观。最终我做了个<strong>违反工业最佳实践但更适合演示</strong>的选择：让按钮同时充当监测开关，停泵就清零界面 + 停止轮询。</p>
+<p><strong>教训</strong>：<strong>对的设计 vs 顺手的设计</strong>有时候不一样。做学习项目时可以选后者，做产品时必须选前者，但你要知道自己选了什么。</p>
+<h3 id="💬-“Debug-切换到-Release-怎么切换”"><a href="#💬-“Debug-切换到-Release-怎么切换”" class="headerlink" title="💬 “Debug 切换到 Release 怎么切换”"></a>💬 “Debug 切换到 Release 怎么切换”</h3><p>这种问题不丢人。Qt Creator 的 Kit 选择器藏在<strong>左下角竖排按钮</strong>里，第一次找真的会找半天。</p>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>怎么操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>快速切换</td>
+<td>左下角 Kit 名 → 弹出面板 → Build 那栏选 Release</td>
+</tr>
+<tr>
+<td>详细配置</td>
+<td>左侧 Projects（扳手图标）→ Build &amp; Run → 顶部 Edit 下拉</td>
+</tr>
+</tbody></table>
+<p><strong>教训</strong>：IDE 的”显然在这里”和新手的”我怎么找不到”之间有巨大的鸿沟。<strong>写教程时永远别假设读者知道按钮在哪</strong>。</p>
+<h3 id="💬-“windeployqt-加-PATH-是干什么用的”"><a href="#💬-“windeployqt-加-PATH-是干什么用的”" class="headerlink" title="💬 “windeployqt 加 PATH 是干什么用的”"></a>💬 “windeployqt 加 PATH 是干什么用的”</h3><p>这个问题让我意识到 <strong>PATH 环境变量</strong> 对新手是个黑盒。</p>
+<p>简单说：<strong>PATH 告诉 Windows 在哪些目录里去找命令</strong>。把 <code>D:\App\Qt6.11\6.11.1\mingw_64\bin\</code> 加进 PATH，就能直接敲 <code>windeployqt</code> 而不用打全路径。</p>
+<p>但坑在哪？—— 如果电脑上还装了 <strong>MSYS2</strong>，它的 <code>windeployqt</code> 已经在 PATH 里了，<strong>版本和 Qt 官方的不一致</strong>。混着用会得到诡异错误。</p>
+<p>我的选择是：<strong>不加 PATH，每次打全路径</strong>。代价是命令长，好处是不会撞车。这种”宁可麻烦也别埋雷”的取舍，写工控代码也是同样的思路。</p>
+<p><strong>教训</strong>：环境变量是把双刃剑。<strong>搞不清楚的时候，宁可显式调用，别依赖隐式查找</strong>。</p>
+<h3 id="💬-“为什么按下停止水泵，按钮还是变成启动水泵”"><a href="#💬-“为什么按下停止水泵，按钮还是变成启动水泵”" class="headerlink" title="💬 “为什么按下停止水泵，按钮还是变成启动水泵”"></a>💬 “为什么按下停止水泵，按钮还是变成启动水泵”</h3><p>这是我做完”按钮反向同步”逻辑后才碰到的问题。</p>
+<p>最初版本里，<code>onReadReady()</code> 会每秒读寄存器 2，根据它<strong>反向同步</strong>按钮文字。设计意图是：如果别人在模拟器里手动改了寄存器 2，HMI 也能跟着变。</p>
+<p>但这制造了一个副作用：我点”停止水泵” → 写入成功，按钮文字变”启动水泵” → 一秒后轮询读到模拟器寄存器 2（如果模拟器不接受写入或者别的原因）→ 又把按钮文字改回”停止水泵”。<strong>视觉上像没反应</strong>。</p>
+<p>后来在第 9 章重构时，<strong>直接去掉了反向同步</strong>：按钮成为唯一的状态来源，配合”停泵就停轮询”的设计，矛盾消失。</p>
+<p><strong>教训</strong>：<strong>双向同步是个陷阱</strong>。两个数据源谁说了算、谁覆盖谁、什么时候同步，没想清楚就会打架。在不确定要不要双向同步时，<strong>先做单向</strong>，加更复杂的逻辑前先证明它必要。</p>
+<h3 id="💬-总结：新手问题不丢人"><a href="#💬-总结：新手问题不丢人" class="headerlink" title="💬 总结：新手问题不丢人"></a>💬 总结：新手问题不丢人</h3><p>写这一章不是自嘲，而是想说明一件事：<strong>这些问题没有一个写在 Qt 官方文档里</strong>。</p>
+<p>文档告诉你 <code>QModbusTcpClient::connectDevice()</code> 怎么用，但不会告诉你”连不上要给用户什么反馈”。<br>文档告诉你 <code>QChart::addSeries()</code> 怎么用，但不会告诉你”实时数据必须关动画”。<br>文档告诉你 <code>windeployqt</code> 的参数，但不会告诉你”PATH 撞车了会怎样”。</p>
+<p><strong>这些都是踩出来的</strong>。如果你也是新手，遇到反直觉的现象时不要急着怀疑代码 —— 先怀疑自己<strong>对工具的理解</strong>，<strong>对协议的理解</strong>，<strong>对系统行为的理解</strong>。这些才是 99% 的卡点所在。</p>
+<hr>
+<h2 id="第-13-章-·-复盘-下一步"><a href="#第-13-章-·-复盘-下一步" class="headerlink" title="第 13 章 · 复盘 + 下一步"></a>第 13 章 · 复盘 + 下一步</h2><h3 id="12-1-这套架构能直接接真实-PLC-吗？"><a href="#12-1-这套架构能直接接真实-PLC-吗？" class="headerlink" title="12.1 这套架构能直接接真实 PLC 吗？"></a>12.1 这套架构能直接接真实 PLC 吗？</h3><p><strong>能，但要改三处</strong>：</p>
+<ol>
+<li><strong>IP 地址和端口</strong>：<code>127.0.0.1:502</code> 改成 PLC 的局域网 IP</li>
+<li><strong>寄存器映射</strong>：要看 PLC 手册，可能不是 Holding Register 而是 Input Register；地址也未必从 0 开始</li>
+<li><strong>Slave ID</strong>：要看 PLC 设的 Modbus 单元号</li>
+</ol>
+<p>业务逻辑、报警、图表代码<strong>一行不用改</strong>。这是 Modbus 协议的好处 —— **协议层抽象掉了”设备到底是谁”**。</p>
+<h3 id="12-2-这个项目没做的事"><a href="#12-2-这个项目没做的事" class="headerlink" title="12.2 这个项目没做的事"></a>12.2 这个项目没做的事</h3><p>诚实地列一下，避免误导读者：</p>
+<ul>
+<li><strong>多设备 &#x2F; 多寄存器分组</strong>：真实工厂一台 PLC 可能挂几十个量，需要分组管理、按需查看</li>
+<li><strong>历史趋势</strong>：数据库只存了报警，没存所有压力数据。完整历史趋势需要单独存一张时间序列表</li>
+<li><strong>用户权限</strong>：操作员能看、工程师能改阈值、管理员能审计 —— 真实 HMI 必备</li>
+<li><strong>断线重连</strong>：现在断线只是停止读取，没有自动重连机制</li>
+<li><strong>配置文件</strong>：IP、端口、阈值都硬编码了，理想情况应该用 <code>QSettings</code> 或 JSON 配置</li>
+</ul>
+<p>每一个展开都是一篇博客的量。但<strong>核心通信和显示框架已经搭好</strong>，加这些都是在已有结构上扩展。</p>
+
+  </div>
+  <div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2026/02/19/007/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">忘记 MySQL 8.0 root 密码？教你如何重置密码 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2026/02/17/006/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">教你提交第一个 GitHub PR--为 tinyserial 项目修复 Bug </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+  <div 
+    class="card card-content comment-card" 
+    style="margin-top: 16px;">
+    <div class="comment-card-title">评论</div>
+    
+  <div id="gitalk-container"></div>
+  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+  
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+
+  
+<script src="/js/lib/md5.min.js"></script>
+
+  <script>
+    var gitalk = new Gitalk({
+      clientID: 'Ov23liPO3SVybUfFfbcH',
+      clientSecret: '22ed759f4b78629a93e8591c93ea2f210e86d3b9',
+      repo: 'blog-comments',
+      owner: 'xwwcyber',
+      admin: ["xwwcyber"],
+      id: md5(location.pathname),
+      distractionFreeMode: false,
+      language: 'zh-CN',
+      labels: ["Gitalk"],
+      perPage: 10
+    })
+
+    gitalk.render('gitalk-container')
+  </script>
+
+  </div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Qt-%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B7%A5%E4%B8%9A%E6%B0%B4%E6%B3%B5%E7%9B%91%E6%8E%A7-HMI"><span class="toc-text">Qt 实战：从零搭建一个工业水泵监控 HMI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%AD%90%EF%BC%9A%E5%85%88%E7%9C%8B%E6%95%88%E6%9E%9C%E5%86%8D%E5%86%B3%E5%AE%9A%E8%A6%81%E4%B8%8D%E8%A6%81%E7%9C%8B"><span class="toc-text">引子：先看效果再决定要不要看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-1-%E7%AB%A0-%C2%B7-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">第 1 章 · 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Qt-%E5%AE%89%E8%A3%85%E4%B8%8E%E6%A8%A1%E5%9D%97"><span class="toc-text">1.1 Qt 安装与模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AE%89%E8%A3%85%E4%B8%80%E4%B8%AA-Modbus-Slave-%E6%A8%A1%E6%8B%9F%E5%99%A8"><span class="toc-text">1.2 安装一个 Modbus Slave 模拟器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BA%A6%E5%AE%9A"><span class="toc-text">1.3 项目目录约定</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-2-%E7%AB%A0-%C2%B7-CMake-%E9%A1%B9%E7%9B%AE%E9%AA%A8%E6%9E%B6"><span class="toc-text">第 2 章 · CMake 项目骨架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-CMakeLists-txt-%E5%85%B3%E9%94%AE%E8%A1%8C%E8%A7%A3%E8%AF%BB"><span class="toc-text">2.1 CMakeLists.txt 关键行解读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-main-cpp-%E6%B2%A1%E4%BB%80%E4%B9%88%E5%A5%BD%E8%AE%B2%E7%9A%84"><span class="toc-text">2.2 main.cpp 没什么好讲的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%85%88%E8%B7%91%E4%B8%80%E4%B8%8B%E7%A9%BA%E7%AA%97%E5%8F%A3"><span class="toc-text">2.3 先跑一下空窗口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-3-%E7%AB%A0-%C2%B7-%E4%B8%BB%E7%95%8C%E9%9D%A2%E5%B8%83%E5%B1%80"><span class="toc-text">第 3 章 · 主界面布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%A4%B4%E6%96%87%E4%BB%B6%E5%85%88%E5%88%97%E5%87%BA%E5%85%A8%E9%83%A8%E6%88%90%E5%91%98"><span class="toc-text">3.1 头文件先列出全部成员</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-1%EF%BC%9AQtCharts-%E5%9C%A8-Qt5-x2F-Qt6-%E7%9A%84%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%B7%AE%E5%BC%82"><span class="toc-text">🟡 坑点 1：QtCharts 在 Qt5 &#x2F; Qt6 的命名空间差异</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%B8%B2%E8%81%94%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3.2 构造函数串联初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-setupUI%EF%BC%9A%E7%BA%AF%E4%BB%A3%E7%A0%81%E6%90%AD%E5%87%BA%E4%B8%BB%E7%95%8C%E9%9D%A2"><span class="toc-text">3.3 setupUI：纯代码搭出主界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E9%85%8D%E8%89%B2%E5%8F%96%E8%88%8D"><span class="toc-text">3.4 配色取舍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-4-%E7%AB%A0-%C2%B7-Modbus-TCP-%E9%80%9A%E4%BF%A1"><span class="toc-text">第 4 章 · Modbus TCP 通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AF%84%E5%AD%98%E5%99%A8%E5%9C%B0%E5%9D%80%E7%BA%A6%E5%AE%9A"><span class="toc-text">4.1 寄存器地址约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E8%BF%9E%E6%8E%A5%EF%BC%9AQModbusTcpClient-%E4%B8%89%E4%BB%B6%E5%A5%97"><span class="toc-text">4.2 连接：QModbusTcpClient 三件套</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-2%EF%BC%9A%E6%B0%B8%E8%BF%9C%E8%A6%81%E7%BB%99%E7%94%A8%E6%88%B7%E5%8F%AF%E8%A7%81%E7%9A%84%E5%A4%B1%E8%B4%A5%E5%8F%8D%E9%A6%88"><span class="toc-text">🟡 坑点 2：永远要给用户可见的失败反馈</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%AE%9A%E6%97%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E5%BC%82%E6%AD%A5%E5%9B%9E%E8%B0%83"><span class="toc-text">4.3 定时读取与异步回调</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-5-%E7%AB%A0-%C2%B7-%E5%AE%9E%E6%97%B6%E5%8E%8B%E5%8A%9B%E6%9B%B2%E7%BA%BF"><span class="toc-text">第 5 章 · 实时压力曲线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-QtCharts-%E5%9F%BA%E7%A1%80%E4%B8%89%E4%BB%B6%E5%A5%97"><span class="toc-text">5.1 QtCharts 基础三件套</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%EF%BC%9A%E5%8F%AA%E6%98%BE%E7%A4%BA%E6%9C%80%E8%BF%91-60-%E7%A7%92"><span class="toc-text">5.2 滑动窗口：只显示最近 60 秒</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-6-%E7%AB%A0-%C2%B7-%E6%8A%A5%E8%AD%A6%E7%B3%BB%E7%BB%9F"><span class="toc-text">第 6 章 · 报警系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E6%8A%A5%E8%AD%A6%E4%B8%89%E4%BB%B6%E4%BA%8B%EF%BC%9A%E5%BC%B9%E7%AA%97%E3%80%81%E5%8F%98%E7%BA%A2%E3%80%81%E8%AE%B0%E6%97%A5%E5%BF%97"><span class="toc-text">6.1 报警三件事：弹窗、变红、记日志</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-3%EF%BC%9A%E7%94%A8-m-alarmActive-%E9%98%B2%E6%AD%A2%E5%8F%8D%E5%A4%8D%E5%BC%B9%E7%AA%97"><span class="toc-text">🟡 坑点 3：用 m_alarmActive 防止反复弹窗</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E7%9A%84%E6%A0%B7%E5%BC%8F%E8%81%94%E5%8A%A8"><span class="toc-text">6.2 恢复正常的样式联动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-7-%E7%AB%A0-%C2%B7-%E6%8A%A5%E8%AD%A6%E6%97%A5%E5%BF%97%EF%BC%9ASQLite-%E8%A1%A8%E6%A0%BC"><span class="toc-text">第 7 章 · 报警日志：SQLite + 表格</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E4%B8%80%E6%AC%A1%E6%80%A7%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">7.1 一次性初始化数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%86%99%E5%85%A5%E4%B8%80%E6%9D%A1%E6%8A%A5%E8%AD%A6"><span class="toc-text">7.2 写入一条报警</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-4%EF%BC%9A%E6%B0%B8%E8%BF%9C%E7%94%A8%E5%8F%82%E6%95%B0%E5%8C%96%E6%9F%A5%E8%AF%A2"><span class="toc-text">🟡 坑点 4：永远用参数化查询</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-8-%E7%AB%A0-%C2%B7-%E6%B0%B4%E6%B3%B5%E6%8E%A7%E5%88%B6%EF%BC%9A%E5%86%99%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">第 8 章 · 水泵控制：写寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-togglePump%EF%BC%9A%E5%8F%91%E4%B8%80%E6%9D%A1%E5%86%99%E5%85%A5%E8%AF%B7%E6%B1%82"><span class="toc-text">8.1 togglePump：发一条写入请求</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-5%EF%BC%9A%E5%86%99%E5%85%A5%E5%A4%B1%E8%B4%A5%E6%97%B6%E4%B8%8D%E8%A6%81%E4%BF%AE%E6%94%B9%E6%9C%AC%E5%9C%B0%E7%8A%B6%E6%80%81"><span class="toc-text">🟡 坑点 5：写入失败时不要修改本地状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-9-%E7%AB%A0-%C2%B7-%E6%8C%89%E9%9C%80%E9%87%87%E9%9B%86%EF%BC%9A%E5%81%9C%E6%B3%B5%E5%B0%B1%E6%B8%85%E9%9B%B6"><span class="toc-text">第 9 章 · 按需采集：停泵就清零</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E4%B8%80%E4%B8%AA%E5%8F%8D%E7%9B%B4%E8%A7%89%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="toc-text">9.1 一个反直觉的设计决策</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-resetDisplay%EF%BC%9A%E7%95%8C%E9%9D%A2%E5%BD%92%E9%9B%B6"><span class="toc-text">9.2 resetDisplay：界面归零</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%EF%BC%9AHMI-%E8%AF%A5%E4%B8%8D%E8%AF%A5%E4%B8%80%E7%9B%B4%E7%9B%91%E6%B5%8B%EF%BC%9F"><span class="toc-text">9.3 设计哲学：HMI 该不该一直监测？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-10-%E7%AB%A0-%C2%B7-%E8%BF%9B%E9%98%B6%EF%BC%9A%E6%99%BA%E8%83%BD-Mock-%E8%AE%A9%E5%8E%8B%E5%8A%9B%E8%81%94%E5%8A%A8"><span class="toc-text">第 10 章 · 进阶：智能 Mock 让压力联动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E6%A8%A1%E6%8B%9F%E5%99%A8%E6%98%AF%E2%80%9D%E7%99%BD%E6%9D%BF%E2%80%9D%EF%BC%8C%E4%B8%8D%E6%98%AF%E2%80%9D%E8%AE%BE%E5%A4%87%E2%80%9D"><span class="toc-text">10.1 模拟器是”白板”，不是”设备”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-pymodbus-%E6%99%BA%E8%83%BD%E6%A8%A1%E6%8B%9F%E8%84%9A%E6%9C%AC"><span class="toc-text">10.2 pymodbus 智能模拟脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-%E6%B5%8B%E8%AF%95%E6%8A%A5%E8%AD%A6"><span class="toc-text">10.3 测试报警</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-11-%E7%AB%A0-%C2%B7-%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%84%B1%E7%A6%BB-Qt-%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8C"><span class="toc-text">第 11 章 · 部署：脱离 Qt 安装独立运行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%85%88%E5%88%87%E5%88%B0-Release-%E6%9E%84%E5%BB%BA"><span class="toc-text">11.1 先切到 Release 构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E8%B7%91-windeployqt"><span class="toc-text">11.2 跑 windeployqt</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-6%EF%BC%9AMSYS2-%E5%92%8C-Qt-%E5%AE%98%E6%96%B9%E7%9A%84-windeployqt-%E4%B8%8D%E8%83%BD%E6%B7%B7%E7%94%A8"><span class="toc-text">🟡 坑点 6：MSYS2 和 Qt 官方的 windeployqt 不能混用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-%E5%93%AA%E4%BA%9B%E6%96%87%E4%BB%B6%E5%8F%AF%E4%BB%A5%E5%88%A0"><span class="toc-text">11.3 哪些文件可以删</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-12-%E7%AB%A0-%C2%B7-%E9%82%A3%E4%BA%9B%E6%88%91%E4%BB%A5%E4%B8%BA%E6%98%AF-bug-%E7%9A%84%E7%9E%AC%E9%97%B4"><span class="toc-text">第 12 章 · 那些我以为是 bug 的瞬间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%90%AF%E5%8A%A8%E6%B2%A1%E6%9C%89%E5%8F%8D%E5%BA%94%E2%80%9D"><span class="toc-text">💬 “为什么启动没有反应”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%98%BE%E7%A4%BA%E5%8E%8B%E5%8A%9B%EF%BC%8C%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E6%B2%A1%E6%9C%89%EF%BC%8C%E6%98%AF%E4%B8%8D%E7%94%A8%E6%98%BE%E7%A4%BA%E5%90%97%E2%80%9D"><span class="toc-text">💬 “为什么只显示压力，其他数据没有，是不用显示吗”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9CModbus-Slave-%E9%87%8C%E9%9D%A2%E9%82%A3%E4%B8%AA-2-%E7%9A%84%E5%80%BC%E6%98%AF-0-%E8%BF%98%E6%98%AF-1-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%E2%80%9D"><span class="toc-text">💬 “Modbus Slave 里面那个 2 的值是 0 还是 1 有什么区别”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%98%E6%88%90%E9%9B%B6%E4%BA%86%E4%B9%8B%E5%90%8E%EF%BC%8C%E8%BF%98%E6%98%AF%E4%BC%9A%E6%A3%80%E6%B5%8B%E5%88%B0%E5%8E%8B%E5%8A%9B%E2%80%9D"><span class="toc-text">💬 “为什么变成零了之后，还是会检测到压力”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%81%9C%E6%AD%A2%E6%B0%B4%E6%B3%B5%E4%B9%8B%E5%90%8E%E8%BF%98%E5%9C%A8%E6%A3%80%E6%B5%8B%E5%8E%8B%E5%8A%9B%E2%80%9D"><span class="toc-text">💬 “为什么停止水泵之后还在检测压力”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9CDebug-%E5%88%87%E6%8D%A2%E5%88%B0-Release-%E6%80%8E%E4%B9%88%E5%88%87%E6%8D%A2%E2%80%9D"><span class="toc-text">💬 “Debug 切换到 Release 怎么切换”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9Cwindeployqt-%E5%8A%A0-PATH-%E6%98%AF%E5%B9%B2%E4%BB%80%E4%B9%88%E7%94%A8%E7%9A%84%E2%80%9D"><span class="toc-text">💬 “windeployqt 加 PATH 是干什么用的”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E4%B8%8B%E5%81%9C%E6%AD%A2%E6%B0%B4%E6%B3%B5%EF%BC%8C%E6%8C%89%E9%92%AE%E8%BF%98%E6%98%AF%E5%8F%98%E6%88%90%E5%90%AF%E5%8A%A8%E6%B0%B4%E6%B3%B5%E2%80%9D"><span class="toc-text">💬 “为什么按下停止水泵，按钮还是变成启动水泵”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E6%80%BB%E7%BB%93%EF%BC%9A%E6%96%B0%E6%89%8B%E9%97%AE%E9%A2%98%E4%B8%8D%E4%B8%A2%E4%BA%BA"><span class="toc-text">💬 总结：新手问题不丢人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-13-%E7%AB%A0-%C2%B7-%E5%A4%8D%E7%9B%98-%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="toc-text">第 13 章 · 复盘 + 下一步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E8%BF%99%E5%A5%97%E6%9E%B6%E6%9E%84%E8%83%BD%E7%9B%B4%E6%8E%A5%E6%8E%A5%E7%9C%9F%E5%AE%9E-PLC-%E5%90%97%EF%BC%9F"><span class="toc-text">12.1 这套架构能直接接真实 PLC 吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E6%B2%A1%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-text">12.2 这个项目没做的事</span></a></li></ol></li></ol></li></ol>
+</div>
+
+            </main>
+            <aside class="right-column">
+              <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Qt-%E5%AE%9E%E6%88%98%EF%BC%9A%E4%BB%8E%E9%9B%B6%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B7%A5%E4%B8%9A%E6%B0%B4%E6%B3%B5%E7%9B%91%E6%8E%A7-HMI"><span class="toc-text">Qt 实战：从零搭建一个工业水泵监控 HMI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%AD%90%EF%BC%9A%E5%85%88%E7%9C%8B%E6%95%88%E6%9E%9C%E5%86%8D%E5%86%B3%E5%AE%9A%E8%A6%81%E4%B8%8D%E8%A6%81%E7%9C%8B"><span class="toc-text">引子：先看效果再决定要不要看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-1-%E7%AB%A0-%C2%B7-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">第 1 章 · 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Qt-%E5%AE%89%E8%A3%85%E4%B8%8E%E6%A8%A1%E5%9D%97"><span class="toc-text">1.1 Qt 安装与模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AE%89%E8%A3%85%E4%B8%80%E4%B8%AA-Modbus-Slave-%E6%A8%A1%E6%8B%9F%E5%99%A8"><span class="toc-text">1.2 安装一个 Modbus Slave 模拟器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E7%BA%A6%E5%AE%9A"><span class="toc-text">1.3 项目目录约定</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-2-%E7%AB%A0-%C2%B7-CMake-%E9%A1%B9%E7%9B%AE%E9%AA%A8%E6%9E%B6"><span class="toc-text">第 2 章 · CMake 项目骨架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-CMakeLists-txt-%E5%85%B3%E9%94%AE%E8%A1%8C%E8%A7%A3%E8%AF%BB"><span class="toc-text">2.1 CMakeLists.txt 关键行解读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-main-cpp-%E6%B2%A1%E4%BB%80%E4%B9%88%E5%A5%BD%E8%AE%B2%E7%9A%84"><span class="toc-text">2.2 main.cpp 没什么好讲的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%85%88%E8%B7%91%E4%B8%80%E4%B8%8B%E7%A9%BA%E7%AA%97%E5%8F%A3"><span class="toc-text">2.3 先跑一下空窗口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-3-%E7%AB%A0-%C2%B7-%E4%B8%BB%E7%95%8C%E9%9D%A2%E5%B8%83%E5%B1%80"><span class="toc-text">第 3 章 · 主界面布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%A4%B4%E6%96%87%E4%BB%B6%E5%85%88%E5%88%97%E5%87%BA%E5%85%A8%E9%83%A8%E6%88%90%E5%91%98"><span class="toc-text">3.1 头文件先列出全部成员</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-1%EF%BC%9AQtCharts-%E5%9C%A8-Qt5-x2F-Qt6-%E7%9A%84%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%B7%AE%E5%BC%82"><span class="toc-text">🟡 坑点 1：QtCharts 在 Qt5 &#x2F; Qt6 的命名空间差异</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%B8%B2%E8%81%94%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">3.2 构造函数串联初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-setupUI%EF%BC%9A%E7%BA%AF%E4%BB%A3%E7%A0%81%E6%90%AD%E5%87%BA%E4%B8%BB%E7%95%8C%E9%9D%A2"><span class="toc-text">3.3 setupUI：纯代码搭出主界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E9%85%8D%E8%89%B2%E5%8F%96%E8%88%8D"><span class="toc-text">3.4 配色取舍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-4-%E7%AB%A0-%C2%B7-Modbus-TCP-%E9%80%9A%E4%BF%A1"><span class="toc-text">第 4 章 · Modbus TCP 通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%AF%84%E5%AD%98%E5%99%A8%E5%9C%B0%E5%9D%80%E7%BA%A6%E5%AE%9A"><span class="toc-text">4.1 寄存器地址约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E8%BF%9E%E6%8E%A5%EF%BC%9AQModbusTcpClient-%E4%B8%89%E4%BB%B6%E5%A5%97"><span class="toc-text">4.2 连接：QModbusTcpClient 三件套</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-2%EF%BC%9A%E6%B0%B8%E8%BF%9C%E8%A6%81%E7%BB%99%E7%94%A8%E6%88%B7%E5%8F%AF%E8%A7%81%E7%9A%84%E5%A4%B1%E8%B4%A5%E5%8F%8D%E9%A6%88"><span class="toc-text">🟡 坑点 2：永远要给用户可见的失败反馈</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%AE%9A%E6%97%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E5%BC%82%E6%AD%A5%E5%9B%9E%E8%B0%83"><span class="toc-text">4.3 定时读取与异步回调</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-5-%E7%AB%A0-%C2%B7-%E5%AE%9E%E6%97%B6%E5%8E%8B%E5%8A%9B%E6%9B%B2%E7%BA%BF"><span class="toc-text">第 5 章 · 实时压力曲线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-QtCharts-%E5%9F%BA%E7%A1%80%E4%B8%89%E4%BB%B6%E5%A5%97"><span class="toc-text">5.1 QtCharts 基础三件套</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%EF%BC%9A%E5%8F%AA%E6%98%BE%E7%A4%BA%E6%9C%80%E8%BF%91-60-%E7%A7%92"><span class="toc-text">5.2 滑动窗口：只显示最近 60 秒</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-6-%E7%AB%A0-%C2%B7-%E6%8A%A5%E8%AD%A6%E7%B3%BB%E7%BB%9F"><span class="toc-text">第 6 章 · 报警系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E6%8A%A5%E8%AD%A6%E4%B8%89%E4%BB%B6%E4%BA%8B%EF%BC%9A%E5%BC%B9%E7%AA%97%E3%80%81%E5%8F%98%E7%BA%A2%E3%80%81%E8%AE%B0%E6%97%A5%E5%BF%97"><span class="toc-text">6.1 报警三件事：弹窗、变红、记日志</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-3%EF%BC%9A%E7%94%A8-m-alarmActive-%E9%98%B2%E6%AD%A2%E5%8F%8D%E5%A4%8D%E5%BC%B9%E7%AA%97"><span class="toc-text">🟡 坑点 3：用 m_alarmActive 防止反复弹窗</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E7%9A%84%E6%A0%B7%E5%BC%8F%E8%81%94%E5%8A%A8"><span class="toc-text">6.2 恢复正常的样式联动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-7-%E7%AB%A0-%C2%B7-%E6%8A%A5%E8%AD%A6%E6%97%A5%E5%BF%97%EF%BC%9ASQLite-%E8%A1%A8%E6%A0%BC"><span class="toc-text">第 7 章 · 报警日志：SQLite + 表格</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E4%B8%80%E6%AC%A1%E6%80%A7%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">7.1 一次性初始化数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E5%86%99%E5%85%A5%E4%B8%80%E6%9D%A1%E6%8A%A5%E8%AD%A6"><span class="toc-text">7.2 写入一条报警</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-4%EF%BC%9A%E6%B0%B8%E8%BF%9C%E7%94%A8%E5%8F%82%E6%95%B0%E5%8C%96%E6%9F%A5%E8%AF%A2"><span class="toc-text">🟡 坑点 4：永远用参数化查询</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-8-%E7%AB%A0-%C2%B7-%E6%B0%B4%E6%B3%B5%E6%8E%A7%E5%88%B6%EF%BC%9A%E5%86%99%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">第 8 章 · 水泵控制：写寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-togglePump%EF%BC%9A%E5%8F%91%E4%B8%80%E6%9D%A1%E5%86%99%E5%85%A5%E8%AF%B7%E6%B1%82"><span class="toc-text">8.1 togglePump：发一条写入请求</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-5%EF%BC%9A%E5%86%99%E5%85%A5%E5%A4%B1%E8%B4%A5%E6%97%B6%E4%B8%8D%E8%A6%81%E4%BF%AE%E6%94%B9%E6%9C%AC%E5%9C%B0%E7%8A%B6%E6%80%81"><span class="toc-text">🟡 坑点 5：写入失败时不要修改本地状态</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-9-%E7%AB%A0-%C2%B7-%E6%8C%89%E9%9C%80%E9%87%87%E9%9B%86%EF%BC%9A%E5%81%9C%E6%B3%B5%E5%B0%B1%E6%B8%85%E9%9B%B6"><span class="toc-text">第 9 章 · 按需采集：停泵就清零</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E4%B8%80%E4%B8%AA%E5%8F%8D%E7%9B%B4%E8%A7%89%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%86%B3%E7%AD%96"><span class="toc-text">9.1 一个反直觉的设计决策</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-resetDisplay%EF%BC%9A%E7%95%8C%E9%9D%A2%E5%BD%92%E9%9B%B6"><span class="toc-text">9.2 resetDisplay：界面归零</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%EF%BC%9AHMI-%E8%AF%A5%E4%B8%8D%E8%AF%A5%E4%B8%80%E7%9B%B4%E7%9B%91%E6%B5%8B%EF%BC%9F"><span class="toc-text">9.3 设计哲学：HMI 该不该一直监测？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-10-%E7%AB%A0-%C2%B7-%E8%BF%9B%E9%98%B6%EF%BC%9A%E6%99%BA%E8%83%BD-Mock-%E8%AE%A9%E5%8E%8B%E5%8A%9B%E8%81%94%E5%8A%A8"><span class="toc-text">第 10 章 · 进阶：智能 Mock 让压力联动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E6%A8%A1%E6%8B%9F%E5%99%A8%E6%98%AF%E2%80%9D%E7%99%BD%E6%9D%BF%E2%80%9D%EF%BC%8C%E4%B8%8D%E6%98%AF%E2%80%9D%E8%AE%BE%E5%A4%87%E2%80%9D"><span class="toc-text">10.1 模拟器是”白板”，不是”设备”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-pymodbus-%E6%99%BA%E8%83%BD%E6%A8%A1%E6%8B%9F%E8%84%9A%E6%9C%AC"><span class="toc-text">10.2 pymodbus 智能模拟脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-%E6%B5%8B%E8%AF%95%E6%8A%A5%E8%AD%A6"><span class="toc-text">10.3 测试报警</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-11-%E7%AB%A0-%C2%B7-%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%84%B1%E7%A6%BB-Qt-%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8C"><span class="toc-text">第 11 章 · 部署：脱离 Qt 安装独立运行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%85%88%E5%88%87%E5%88%B0-Release-%E6%9E%84%E5%BB%BA"><span class="toc-text">11.1 先切到 Release 构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E8%B7%91-windeployqt"><span class="toc-text">11.2 跑 windeployqt</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%F0%9F%9F%A1-%E5%9D%91%E7%82%B9-6%EF%BC%9AMSYS2-%E5%92%8C-Qt-%E5%AE%98%E6%96%B9%E7%9A%84-windeployqt-%E4%B8%8D%E8%83%BD%E6%B7%B7%E7%94%A8"><span class="toc-text">🟡 坑点 6：MSYS2 和 Qt 官方的 windeployqt 不能混用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-%E5%93%AA%E4%BA%9B%E6%96%87%E4%BB%B6%E5%8F%AF%E4%BB%A5%E5%88%A0"><span class="toc-text">11.3 哪些文件可以删</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-12-%E7%AB%A0-%C2%B7-%E9%82%A3%E4%BA%9B%E6%88%91%E4%BB%A5%E4%B8%BA%E6%98%AF-bug-%E7%9A%84%E7%9E%AC%E9%97%B4"><span class="toc-text">第 12 章 · 那些我以为是 bug 的瞬间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%90%AF%E5%8A%A8%E6%B2%A1%E6%9C%89%E5%8F%8D%E5%BA%94%E2%80%9D"><span class="toc-text">💬 “为什么启动没有反应”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%98%BE%E7%A4%BA%E5%8E%8B%E5%8A%9B%EF%BC%8C%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E6%B2%A1%E6%9C%89%EF%BC%8C%E6%98%AF%E4%B8%8D%E7%94%A8%E6%98%BE%E7%A4%BA%E5%90%97%E2%80%9D"><span class="toc-text">💬 “为什么只显示压力，其他数据没有，是不用显示吗”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9CModbus-Slave-%E9%87%8C%E9%9D%A2%E9%82%A3%E4%B8%AA-2-%E7%9A%84%E5%80%BC%E6%98%AF-0-%E8%BF%98%E6%98%AF-1-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%E2%80%9D"><span class="toc-text">💬 “Modbus Slave 里面那个 2 的值是 0 还是 1 有什么区别”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%98%E6%88%90%E9%9B%B6%E4%BA%86%E4%B9%8B%E5%90%8E%EF%BC%8C%E8%BF%98%E6%98%AF%E4%BC%9A%E6%A3%80%E6%B5%8B%E5%88%B0%E5%8E%8B%E5%8A%9B%E2%80%9D"><span class="toc-text">💬 “为什么变成零了之后，还是会检测到压力”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%81%9C%E6%AD%A2%E6%B0%B4%E6%B3%B5%E4%B9%8B%E5%90%8E%E8%BF%98%E5%9C%A8%E6%A3%80%E6%B5%8B%E5%8E%8B%E5%8A%9B%E2%80%9D"><span class="toc-text">💬 “为什么停止水泵之后还在检测压力”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9CDebug-%E5%88%87%E6%8D%A2%E5%88%B0-Release-%E6%80%8E%E4%B9%88%E5%88%87%E6%8D%A2%E2%80%9D"><span class="toc-text">💬 “Debug 切换到 Release 怎么切换”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9Cwindeployqt-%E5%8A%A0-PATH-%E6%98%AF%E5%B9%B2%E4%BB%80%E4%B9%88%E7%94%A8%E7%9A%84%E2%80%9D"><span class="toc-text">💬 “windeployqt 加 PATH 是干什么用的”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E4%B8%8B%E5%81%9C%E6%AD%A2%E6%B0%B4%E6%B3%B5%EF%BC%8C%E6%8C%89%E9%92%AE%E8%BF%98%E6%98%AF%E5%8F%98%E6%88%90%E5%90%AF%E5%8A%A8%E6%B0%B4%E6%B3%B5%E2%80%9D"><span class="toc-text">💬 “为什么按下停止水泵，按钮还是变成启动水泵”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%F0%9F%92%AC-%E6%80%BB%E7%BB%93%EF%BC%9A%E6%96%B0%E6%89%8B%E9%97%AE%E9%A2%98%E4%B8%8D%E4%B8%A2%E4%BA%BA"><span class="toc-text">💬 总结：新手问题不丢人</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-13-%E7%AB%A0-%C2%B7-%E5%A4%8D%E7%9B%98-%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="toc-text">第 13 章 · 复盘 + 下一步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E8%BF%99%E5%A5%97%E6%9E%B6%E6%9E%84%E8%83%BD%E7%9B%B4%E6%8E%A5%E6%8E%A5%E7%9C%9F%E5%AE%9E-PLC-%E5%90%97%EF%BC%9F"><span class="toc-text">12.1 这套架构能直接接真实 PLC 吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E6%B2%A1%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-text">12.2 这个项目没做的事</span></a></li></ol></li></ol></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-05-21</div>
+        <a href="/2026/05/21/012/"><div class="recent-posts-item-content">AI股票分析</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-03-18</div>
+        <a href="/2026/03/18/009/"><div class="recent-posts-item-content">关于claude code的使用体验</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-03-13</div>
+        <a href="/2026/03/13/010/"><div class="recent-posts-item-content">自建影视聚合平台</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-27</div>
+        <a href="/2026/02/27/011/"><div class="recent-posts-item-content">对AI辅助编程的思考和摘录</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          xww的个人博客
+        </a>
+      </div>
+    </div>
+
+    
+      <div class="footer-dsc">
+        
+          Powered by
+          <a 
+            href="https://hexo.io/" 
+            class="footer-link" 
+            target="_blank" 
+            rel="nofollow noopener noreferrer">
+            &nbsp;Hexo
+          </a>
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          Theme -
+          <a 
+            href="https://github.com/theme-kaze" 
+            class="footer-link" 
+            target="_blank"
+            rel="nofollow noopener noreferrer">
+            &nbsp;Kaze
+          </a>
+        
+      </div>
+    
+    
+    
+    
+</footer>
+ 
+    
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a> 
+     
+     
+     
+      <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+ 
+     
+     
+    <script src="/js/main.js"></script> 
+     
+    
+      <script>
+        var addLazyload = function () {
+          var observer = lozad('.lozad', {
+            load: function (el) {
+              el.srcset = el.getAttribute('data-src')
+            },
+            loaded: function (el) {
+              el.classList.add('loaded')
+            },
+          })
+          observer.observe()
+        }
+      </script>
+      <script>
+        loadScript('/js/lib/lozad.min.js', addLazyload)
+      </script>
+    
+    <script src="//instant.page/5.1.0" type="module"
+      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+    
+    
+  </body>
+</html>
