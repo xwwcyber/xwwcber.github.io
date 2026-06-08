@@ -485,7 +485,7 @@
     
     
       <span class="dot"></span>
-      <span>7.8k 字</span>
+      <span>7.7k 字</span>
     
   </div>
   
@@ -532,9 +532,10 @@
 <li>一个按钮可以<strong>远程启停水泵</strong></li>
 </ul>
 <p>跑起来大概是这样的（贴一张你自己截的运行截图）：</p>
-<p><img src="/%E5%9B%BE%E4%BD%8D%E7%BD%AE%E5%8D%A0%E4%BD%8D" alt="PumpHMI 运行截图" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/%E5%9B%BE%E4%BD%8D%E7%BD%AE%E5%8D%A0%E4%BD%8D" class="lozad post-image"></p>
+<img width="1127" height="789" alt="image" src="https://github.com/user-attachments/assets/3531c4f2-16eb-407b-91d3-ee3e6e299d32" />
+
+
 <p>技术栈：<strong>Qt 6.11 + MinGW 64-bit + QtCharts + QtSerialBus + QtSql</strong>。<br>代码量：两个 cpp &#x2F; h 文件，不到 350 行。</p>
-<p>这篇文章会从<strong>空白工程</strong>开始，一步一步把它做完。中途我会把自己踩过的几个<strong>反直觉的坑</strong>单独点出来 —— 因为说实话，这类小项目的难点不在 Qt 本身，而在”我以为是 bug、其实是设计如此”的瞬间。</p>
 <hr>
 <h2 id="第-1-章-·-环境准备"><a href="#第-1-章-·-环境准备" class="headerlink" title="第 1 章 · 环境准备"></a>第 1 章 · 环境准备</h2><h3 id="1-1-Qt-安装与模块"><a href="#1-1-Qt-安装与模块" class="headerlink" title="1.1 Qt 安装与模块"></a>1.1 Qt 安装与模块</h3><p>去 <a target="_blank" rel="noopener" href="https://www.qt.io/download-qt-installer">qt.io</a> 下 Qt Online Installer，登录账号（个人免费），选 <strong>Qt 6.11.x</strong>，编译器选 <strong>MinGW 64-bit</strong>。</p>
 <p><strong>必须勾选的模块</strong>（默认有些不装）：</p>
