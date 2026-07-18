@@ -1,5 +1,5 @@
 ---
-title: 从 STM32 到 Linux 服务器：基于 FreeRTOS 与 ESP-01S 的物联网采集终端
+title: 基于 STM32F103 与 FreeRTOS 实现仓库环境监测终端
 excerpt: 复盘一个集蓝牙配网、双通道采集、无线传输和服务端存储于一体的物联网终端。
 date: 2025-03-25 11:09:21 +0800
 categories:
