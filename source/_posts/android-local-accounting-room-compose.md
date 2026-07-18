@@ -1,10 +1,9 @@
 ---
-title: 从 Hello Android 到本地记账 App：Room、StateFlow 与 Compose 的完整实践
+title: Android 原生开发的本地记账 App
 excerpt: 复盘一款本地记账 App 的数据层、响应式 UI、数据库迁移与依赖兼容问题。
 date: 2026-07-18 11:22:21 +0800
 categories:
   - Android
-  - 移动开发
 tags:
   - Kotlin
   - Jetpack Compose
