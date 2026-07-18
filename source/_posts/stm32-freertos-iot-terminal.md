@@ -4,8 +4,6 @@ excerpt: 复盘一个集蓝牙配网、双通道采集、无线传输和服务�
 date: 2025-03-25 11:09:21 +0800
 categories:
   - 嵌入式
-  - Linux
-  - 物联网
 tags:
   - STM32F103
   - FreeRTOS
